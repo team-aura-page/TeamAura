@@ -1,0 +1,1613 @@
+/* =========================================
+   1. VARIABLES Y CONFIGURACIÓN GENERAL
+   ========================================= */
+:root {
+    --gold: #ffcc00;           /* Color principal */
+    --bg-dark: #121212;        /* Fondo web */
+    --bg-panel: #2a2a2a;       /* Fondo paneles/modal */
+    --text-white: #e0e0e0;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+@font-face {
+    font-family: 'PokemonFireRed';
+    src: url('../font/bwfont.otf') format('opentype'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: 'PokemonFireRed', 'Courier New', monospace; 
+    font-size: 16px; 
+    line-height: 1.6;
+    text-align: center;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a { text-decoration: none; color: inherit; }
+
+h1, h2, h3, h4 { 
+    color: #ffffff; 
+    margin-bottom: 15px; 
+    font-weight: normal; 
+}
+
+/* =========================================
+   2. HEADER Y NAVEGACIÓN
+   ========================================= */
+.main-header {
+    padding: 0 20px; 
+}
+
+.main-logo {
+    max-width: 700px; 
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+}
+
+/* --- BARRA DE NAVEGACIÓN --- */
+.main-nav {
+    /* STICKY NAV */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    
+    display: flex;
+    justify-content: center;
+    gap: 80px; 
+    padding: 25px 10px; 
+    flex-wrap: wrap; 
+    background-color: #111; 
+    border-top: 4px solid var(--gold);   
+    border-bottom: 4px solid var(--gold); 
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.15);
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s, filter 0.2s;
+    width: auto; 
+}
+
+.nav-item img {
+    width: 36px; 
+    height: 36px;
+    object-fit: contain;
+}
+
+.nav-item span {
+    font-weight: bold; 
+    font-size: 1.8rem;
+    color: var(--gold); 
+    white-space: nowrap; 
+}
+
+/* === ESTADO ACTIVO (Página Actual) === */
+
+.nav-item.active {
+    pointer-events: none; /* Desactiva clicks y hovers automáticamente */
+    cursor: default;
+}
+
+.nav-item.active span {
+
+    color: #c49b00;
+    /* La línea dorada */
+    border-bottom: 3px solid #c49b00;;
+    
+    /* TRUCOS PARA PEGARLO AL TEXTO: */
+    display: inline-block; /* Hace que la caja se ajuste perfectamente al texto */
+    line-height: 1;        /* Reduce la altura de línea para quitar espacio extra */
+    padding-bottom: 1px;   /* Un espacio minúsculo para no cortar la 'g', 'y', 'j' */
+}
+
+/* Nota: He borrado todos los bloques de ".nav-item.active:hover" 
+   porque pointer-events: none ya se encarga de que no se muevan. */
+
+
+/* === ELEMENTO ESPECIAL "TEAM AURA" (Izquierda) === */
+.nav-start {
+    position: absolute; 
+    left: 40px;         
+    top: 50%;           
+    transform: translateY(-50%); 
+}
+
+.nav-start img { width: 45px; height: 45px; }
+
+
+/* === HOVERS NORMALES (Solo aplican a los NO activos) === */
+
+/* Hover para el logo */
+.nav-start:not(.active):hover {
+    transform: translateY(calc(-50% - 5px)); 
+}
+.nav-start:not(.active):hover span {
+    filter: brightness(1.2); 
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+}
+
+/* Hover para botones normales */
+.nav-item:not(.nav-start):not(.active):hover {
+    transform: translateY(-5px); 
+}
+.nav-item:not(.nav-start):not(.active):hover span{
+    filter: brightness(1.2); 
+}
+
+/* Responsive Nav */
+@media (max-width: 900px) {
+    .nav-start {
+        position: static;
+        transform: none;
+        margin-bottom: 10px;
+    }
+    .main-nav { gap: 20px; }
+}
+
+/* =========================================
+   3. LAYOUT Y CONTENIDO PRINCIPAL
+   ========================================= */
+.divider {
+    border: 0;
+    height: 1px;
+    background: #333;
+    margin: 0;
+}
+
+.content-container { margin: 0 auto; }
+.page-index .content-container { max-width: 800px; }
+.page-showcase .content-container { max-width: 3000px; }
+
+.about-section p {
+    font-size: 1.5rem; /* Aumenta este número si lo quieres más grande */
+    line-height: 1.8;  /* Separación entre líneas para leer mejor */
+    margin-bottom: 15px;
+    color: var(--text-white);
+    max-width: 90%;    /* Evita líneas demasiado largas */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about-section h2{
+    font-size: 2.2rem;
+}
+
+.staff-section {
+    margin-top: 30px;
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+/* === FILTROS Y BUSCADOR === */
+.filters-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    margin-top: 35px;
+    flex-wrap: wrap;
+}
+
+/* Estilo común para Input y Select */
+.filters-container input,
+.filters-container select {
+    background-color: #1a1a1a;
+    border: 2px solid var(--gold);
+    color: var(--text-white);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-family: 'PokemonFireRed', monospace; /* Tu fuente */
+    font-size: 1.2rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Efecto al hacer foco */
+.filters-container input:focus,
+.filters-container select:focus {
+    background-color: #2a2a2a;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+/* El input un poco más ancho */
+.filters-container input {
+    width: 250px;
+}
+
+/* El select con cursor de mano */
+.filters-container select {
+    cursor: pointer;
+}
+
+/* Ajuste móvil */
+@media (max-width: 600px) {
+    .filters-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .filters-container input,
+    .filters-container select {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* =========================================
+   4. TARJETAS DE STAFF (GRID)
+   ========================================= */
+.staff-grid {
+    display: grid;
+    gap: 30px; 
+    justify-items: center;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Configuración de columnas según página */
+.page-index .staff-grid {
+    max-width: 600px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.page-showcase .staff-grid {
+    max-width: 1400px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+@media (max-width: 550px) {
+    .page-index .staff-grid,
+    .page-showcase .staff-grid {
+        grid-template-columns: 1fr;
+        max-width: 300px;
+    }
+}
+
+/* Estilo individual de tarjeta */
+.staff-card {
+    background: #333333; 
+    border: 3px solid var(--gold); 
+    border-radius: 15px;
+    padding: 20px;
+    width: 220px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+.staff-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.4); 
+}
+
+.staff-avatar-container {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.staff-avatar-container img {
+    height: 130%; 
+    width: auto;
+    margin-bottom: -20px;
+    object-fit: contain;
+    image-rendering: pixelated; 
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+}
+
+.staff-card h3 {
+    color: var(--gold); 
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.shiny-counter {
+    color: #b5b5b5;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+
+/* === COLORES DEL TOP 3 (Ranking) === */
+
+/* TOP 1: Oro Brillante */
+.shiny-counter.rank-gold {
+    color: #ffcc00; /* Tu variable --gold */
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.6); /* Un resplandor fuerte */
+    font-weight: bold;
+    font-size: 1.3rem; /* Un pelín más grande */
+}
+
+/* TOP 2: Plata Metálica */
+.shiny-counter.rank-silver {
+    color: #e0e0e0; /* Un gris muy claro casi blanco */
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    font-weight: bold;
+}
+
+/* TOP 3: Bronce / Cobre */
+.shiny-counter.rank-bronze {
+    color: #cd7f32; /* Color cobre clásico */
+    text-shadow: 0 0 5px rgba(205, 127, 50, 0.4);
+    font-weight: bold;
+}
+
+/* =========================================
+   5. ANIMACIONES Y TÍTULOS DORADOS (FIXED)
+   ========================================= */
+
+@keyframes shineSweep {
+    from { background-position: 200% center; }
+    to { background-position: -200% center; }
+}
+
+/* AQUÍ ESTÁ EL ARREGLO:
+   En vez de 'composes', aplicamos las reglas a ambos títulos a la vez */
+.staff-title,
+.modal-title-large {
+    /* Degradado dorado con doble brillo */
+    background: linear-gradient(
+        to right, 
+        var(--gold) 0%,   var(--gold) 20%,  
+        #ffffff 25%,  
+        var(--gold) 30%,  
+        var(--gold) 70%,
+        #ffffff 75%,  
+        var(--gold) 80%,  var(--gold) 100%  
+    );
+    background-size: 200% auto; 
+    color: transparent; 
+    background-clip: text;
+    -webkit-background-clip: text; 
+    
+    /* Animación compartida */
+    animation: shineSweep 12s linear infinite;
+    
+    text-transform: uppercase;
+}
+
+/* Estilos específicos de cada uno (tamaño, margen) */
+.staff-title {
+    font-size: 3rem;
+    margin-bottom: 40px;
+}
+
+.modal-title-large {
+    flex: 1; 
+    text-align: center;
+    font-size: 3rem; 
+    margin: 0;
+    letter-spacing: 1px;
+    filter: drop-shadow(3px 3px 0px #000);
+}
+
+/* =========================================
+   6. MODAL (POPUP)
+   ========================================= */
+.modal-overlay {
+
+    position: fixed;
+
+    top: 0; left: 0;
+
+    width: 100%; height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.85);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 1000;
+
+    transition: opacity 0.3s ease;
+
+}
+
+.modal-content {
+    background-color: var(--bg-panel); 
+    padding: 30px;
+    border-radius: 20px;
+    border: 4px solid var(--gold); 
+    width: 90%;
+    max-width: 1100px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px; right: 25px;
+    font-size: 2.5rem;
+    color: var(--gold);
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+}
+.close-btn:hover { color: #ffffff; }
+
+.hidden { display: none !important; }
+.no-scroll { overflow: hidden; height: 100vh; }
+
+.modal-divider {
+    border: 0;
+    height: 2px;
+    background: var(--gold);
+    margin: 20px 0;
+    opacity: 0.5;
+}
+
+/* --- CABECERA DEL MODAL --- */
+.modal-header-redesigned {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-bottom: 25px;
+    padding: 0 10px;
+    position: relative;
+    min-height: 180px; 
+}
+
+.modal-avatar-wrapper {
+    flex: 0 0 180px; 
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-avatar-wrapper img {
+    height: 100%; 
+    width: auto;
+    object-fit: contain;
+    image-rendering: pixelated; 
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
+    transition: transform 0.3s ease;
+}
+.modal-avatar-wrapper img:hover { transform: scale(1.1); }
+
+
+/* --- CUERPO DEL MODAL (Grid y Leyenda) --- */
+.modal-body-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.pokemon-team-grid {
+    flex: 1; 
+    display: flex;
+    flex-wrap: wrap;      
+    justify-content: center; 
+    gap: 15px;
+    align-items: center;
+    
+    max-height: 400px;      
+    overflow-y: auto;       
+    overflow-x: hidden;    
+    padding: 10px;
+    
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) var(--bg-panel);
+}
+
+.pokemon-team-grid::-webkit-scrollbar { width: 8px; }
+.pokemon-team-grid::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+/* =========================================
+   7. LEYENDA (SIDEBAR)
+   ========================================= */
+.legend-sidebar {
+    width: 200px;
+    background-color: #1a1a1a;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    padding: 15px 10px 15px 35px; /* Padding izq para centrar visualmente */
+    flex-shrink: 0;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    margin-right: 40px; 
+}
+
+.legend-sidebar h4 {
+    color: var(--gold);
+    font-size: 1.2rem;
+    text-align: center;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    
+    margin-left: -20px; 
+    width: calc(100% + 10px);
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px; 
+    margin-bottom: 8px;
+    color: var(--text-white);
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.sidebar-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+}
+
+
+/* =========================================
+   8. POKEMON OVERLAYS (Iconos sobre Sprites)
+   ========================================= */
+.poke-overlay-container {
+    position: relative; 
+    display: inline-block; 
+    margin: 5px; 
+}
+
+/* --- SPRITE BASE --- */
+.poke-base-sprite { 
+    display: block; 
+    /* Transición suave para el efecto de crecimiento */
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Estilo para Pokémon huídos (Safari) */
+.poke-base-sprite.poke-fled {
+    filter: grayscale(100%); 
+    opacity: 0.6;
+}
+
+/* --- GIF DE BRILLITOS (SPARKLE) --- */
+.poke-sparkle-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(180deg); /* Centrado perfecto */
+    
+    width: 140%; /* Un poco más grande que el sprite para rodearlo */
+    height: 140%;
+    object-fit: contain;
+    
+    opacity: 0; /* Oculto por defecto */
+    pointer-events: none; /* Ignora el ratón */
+    z-index: 15; /* Encima del pokemon, debajo del icono leyenda */
+    transition: opacity 0.3s ease;
+
+    filter: sepia(100%) saturate(600%) hue-rotate(15deg) brightness(120%);
+}
+
+/* --- ICONO DE LEYENDA (Esquina sup. derecha) --- */
+.poke-legend-icon {
+    position: absolute; 
+    top: 0px; right: 0px; 
+    width: 28px; height: 28px;
+    object-fit: contain;
+    z-index: 10; /* Siempre encima de todo */
+    filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.8)); 
+}
+
+/* =========================================
+   INTERACCIONES (HOVER)
+   ========================================= */
+
+/* 1. CRECIMIENTO: Al pasar el ratón, el sprite crece (si no ha huído) */
+.poke-overlay-container:hover .poke-base-sprite:not(.poke-fled) {
+    transform: scale(1.2); 
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6)); /* Resplandor blanco */
+    position: relative;
+    z-index: 8; /* Sube de nivel para no quedar tapado por los vecinos */
+}
+
+/* 2. BRILLO: Al pasar el ratón, mostramos el gif */
+.poke-overlay-container:hover .poke-sparkle-effect {
+    opacity: 1;
+}
+
+/* 3. EXCEPCIÓN: Si huyó, anulamos el brillo aunque hagamos hover */
+.poke-overlay-container:hover .poke-base-sprite.poke-fled ~ .poke-sparkle-effect {
+    display: none;
+    opacity: 0;
+}
+
+/* =========================================
+   9. RESPONSIVE GLOBAL
+   ========================================= */
+@media (max-width: 800px) {
+    /* Modal Header a columna */
+    .modal-header-redesigned {
+        flex-direction: column;
+        gap: 10px;
+        min-height: auto;
+    }
+    .modal-avatar-wrapper { flex: 0 0 120px; height: 120px; }
+    .modal-title-large { font-size: 2rem; }
+    
+    /* Modal Body a columna */
+    .modal-body-wrapper { flex-direction: column; }
+    .pokemon-team-grid { width: 100%; margin-bottom: 20px; }
+    
+    /* Leyenda */
+    .legend-sidebar {
+        width: 100%;
+        margin-right: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 10px;
+        gap: 10px;
+    }
+    .legend-sidebar h4 {
+        grid-column: span 2;
+        margin-left: 0; width: 100%;
+    }
+}
+/*VITAL MOVIES*/
+
+/* --- LAYOUT GENERAL --- */
+/* --- ESTRUCTURA GENERAL --- */
+html {
+    scroll-behavior: smooth;
+}
+
+.shinydex-content {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.shinydex-body {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 20px;
+    align-items: start;
+    position: relative;
+}
+
+/* --- CABECERA Y BUSCADOR --- */
+.search-wrapper {
+    text-align: center;
+    margin-top: 35px;
+    margin-bottom: 25px;
+    padding: 0 20px;
+}
+
+#search {
+    width: 600px;
+    max-width: 420px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    border: 2px solid #ffcc00;
+    color: #ffffff;
+    font-family: 'PokemonFireRed', monospace;
+    font-size: 1.1rem;
+    outline: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+}
+
+#search:focus {
+    background-color: #2a2a2a;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+    transform: translateY(-3px);
+}
+
+#shiny-counter {
+    font-weight: bold;
+    color: #ffcc00;
+    font-size: 1.2rem;
+    transition: color 0.5s ease;
+}
+
+/* --- BLOQUES DE GENERACIÓN --- */
+.gen-block {
+    margin-bottom: 60px;
+    scroll-margin-top: 110px; 
+}
+
+.gen-title {
+    color: #ffcc00;
+    border-left: 4px solid #ffcc00;
+    padding-left: 15px;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    text-align: left;
+}
+
+.count-wrapper {
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.percentage-text {
+    font-size: 1rem;
+    margin-left: 10px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    min-width: 50px;
+    text-align: center;
+}
+
+.shinydex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+}
+
+/* --- CARDS (REVELADO PROGRESIVO) --- */
+.shiny-card {
+    position: relative;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 30px 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 140px;
+    overflow: hidden;
+    filter: grayscale(100%);
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.3s ease, 
+                filter 0.3s ease, 
+                opacity 0.6s ease-out;
+}
+
+.shiny-card.visible {
+    opacity: 0.3;
+    transform: translateY(0);
+}
+
+.shiny-card.captured.visible,
+.shiny-card.captured-live-no.visible {
+    opacity: 1;
+    pointer-events: auto;
+    filter: grayscale(0%);
+}
+
+.shiny-card.captured {
+    border-color: #4caf50;
+    background: radial-gradient(circle at center, #1e2a1e 0%, #1a1a1a 100%);
+    animation: aura-pulse 3s infinite ease-in-out;
+}
+
+.shiny-card.captured-live-no {
+    border-color: #ffd700;
+    background: radial-gradient(circle at center, #2e2a15 0%, #1a1a1a 100%);
+    animation: aura-pulse-yellow 3s infinite ease-in-out;
+}
+
+.shiny-card.captured::after,
+.shiny-card.captured-live-no::after {
+    content: "";
+    position: absolute;
+    top: -50%; left: -150%;
+    width: 200%; height: 200%;
+    background: linear-gradient(115deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%, transparent 100%);
+    animation: metallic-shine 5s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes aura-pulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(74, 175, 80, 0.4); }
+    50% { box-shadow: 0 0 25px rgba(74, 175, 80, 0.7); }
+}
+
+@keyframes aura-pulse-yellow {
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+}
+
+@keyframes metallic-shine {
+    0% { left: -150%; }
+    20%, 100% { left: 100%; }
+}
+
+.shiny-card.captured:hover,
+.shiny-card.captured-live-no:hover {
+    transform: scale(1.1) translateY(-5px);
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+}
+
+/* Solo mostramos tooltip en cartas verdes (.captured) */
+.shiny-card.captured:hover .trainer-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* --- ÍNDICE LATERAL (CON ZOOM) --- */
+.shinydex-index {
+    position: sticky;
+    top: 120px;
+    margin-top: 75px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+}
+
+.shinydex-index a {
+    text-decoration: none;
+    color: #ffcc00;
+    border: 2px solid #ffcc00;
+    border-radius: 8px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+    background: #000;
+    /* Transición elástica para el zoom */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                background 0.3s ease, 
+                color 0.3s ease, 
+                box-shadow 0.3s ease,
+                opacity 0.5s ease;
+    
+    opacity: 0;
+    transform: translateX(30px) scale(0.5);
+    pointer-events: none;
+}
+
+.shinydex-index a.reveal {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+}
+
+/* EFECTO ZOOM AL PASAR EL RATÓN */
+.shinydex-index a.reveal:hover {
+    transform: scale(1) translateX(-5px); /* Zoom + desplazamiento lateral */
+    background: #ffcc00;
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+    cursor: pointer;
+}
+
+.shinydex-index a.active {
+    background: #ffcc00;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+    transform: scale(1.1);
+}
+
+/* --- SPRITES --- */
+.sprite-wrapper {
+    width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 5px; position: relative;
+}
+
+.sprite-wrapper img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; image-rendering: pixelated;
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.6));
+    transition: transform 0.3s ease;
+}
+
+.shiny-card.captured:hover .sprite-wrapper img {
+    transform: scale(1.1) translateY(-5px);
+    filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.8));
+}
+
+.poke-number { position: absolute; top: 5px; font-size: 0.90rem; font-weight: bold; color: #ffffff; }
+.poke-name { color: #ffffff; font-size: 0.85rem; font-weight: bold; text-align: center; margin-top: auto; width: 100%; }
+
+/* === TOOLTIP GLOBAL FLOTANTE (OPTIMIZADO CON SCROLL) === */
+#global-tooltip {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    /* Transición suave solo para aparecer/desaparecer */
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    
+    /* OPTIMIZACIÓN GPU: */
+    will-change: transform; 
+    
+    background-color: rgba(15, 15, 15, 0.95);
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    padding: 12px 15px;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    min-width: 180px; /* Un poco más ancho para nombres largos */
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+/* Clase para mostrarlo */
+#global-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Título "CAPTURADO POR" */
+#global-tooltip .tooltip-title {
+    display: block;
+    color: #ffd700;
+    font-family: 'Segoe UI', sans-serif; /* Aseguramos fuente bonita */
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem; /* Un pelín más pequeño para jerarquía */
+    margin-bottom: 8px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    letter-spacing: 1.5px;
+}
+
+/* === MÁSCARA DE SCROLL (NUEVO) === */
+/* Esta es la "ventana" que solo deja ver 5 nombres */
+#global-tooltip .tooltip-scroll-mask {
+    /* Calculado para aprox 5 nombres con font-size 1.2rem */
+    max-height: 125px; 
+    overflow: hidden;  
+    position: relative;
+    /* Degradado al final para indicar que sigue */
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+/* Lista de nombres */
+#global-tooltip .tooltip-names {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    font-size: 1.1rem; /* Ajustado ligeramente */
+    font-weight: 500;
+    /* Preparamos para animación */
+    will-change: transform;
+}
+
+#global-tooltip .tooltip-names li {
+    padding: 2px 0;
+}
+
+/* === ANIMACIÓN DE SCROLL === */
+/* Esta clase se añade con JS si hay más de 5 nombres */
+#global-tooltip .tooltip-names.scrolling {
+    animation: vertical-scroll 12s ease-in-out infinite alternate; 
+}
+
+@keyframes vertical-scroll {
+    /* 0% a 5%: Pausa inicial MUY BREVE (solo para que el ojo enfoque) */
+    0%, 5% { 
+        transform: translateY(0); 
+    }
+    
+    /* 95% a 100%: Llega al final y hace una pausa breve antes de subir */
+    /* El trayecto de bajada ocurre entre el 5% y el 95% (mucha parte del tiempo) */
+    95%, 100% { 
+        transform: translateY(calc(-100% + 125px)); 
+    }
+}
+
+/* =========================================
+   ESTILOS SHINY WAR (Archeops vs Aerodactyl)
+   ========================================= */
+
+/* 1. El contenedor principal de la página */
+.page-shinywar {
+    background-color: #121212;
+    position: relative;
+    min-height: 100vh; /* Asegura que ocupe al menos toda la altura de la pantalla */
+    overflow-x: hidden; /* Mantenemos esto para evitar scroll lateral por los sprites */
+}
+
+/* 2. La capa "falsa" del fondo (Pseudo-elemento ::before) */
+.page-shinywar::before {
+    content: ""; /* Necesario para que el pseudo-elemento exista */
+    position: fixed; /* Se queda fijo en la pantalla aunque hagas scroll */
+    top: 0; left: 0; right: 0; bottom: 0; /* Ocupa toda la pantalla */
+    z-index: -1; /* Se coloca DETRÁS del contenido de la web */
+    
+    /* --- Configuración de la imagen --- */
+    background-image: url(../icons/fondowar.png);
+    background-size: cover; /* Estira la imagen para cubrir todo sin deformarla */
+    background-position: center center; /* Centra la imagen */
+    background-repeat: no-repeat;
+    filter: blur(10px); 
+
+    background-color: rgba(0, 0, 0, 0.5);
+    background-blend-mode: darken;
+}
+.war-content {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* --- MARCADOR SUPERIOR --- */
+.war-scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.team-header {
+    text-align: center;
+    flex: 1;
+}
+
+.team-header h1 {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+
+/* Colores de Equipos (INVERTIDOS) */
+
+/* EQUIPO A (Archeops) - VERDE */
+.team-a h1 { 
+    color: #2ed573; 
+    text-shadow: 0 0 20px rgba(46, 213, 115, 0.6); 
+}
+
+/* EQUIPO B (Aerodactyl) - MORADO */
+.team-b h1 { 
+    color: #ce5cff; 
+    text-shadow: 0 0 20px rgba(206, 92, 255, 0.6); 
+}
+
+.score-box {
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- LOGO VS CENTRAL --- */
+.vs-badge {
+    /* Quitamos tamaño fijo y fondo */
+    background: transparent;
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    /* Estilo del texto "VS" */
+    font-size: 4.5rem; /* Un poco más grande ahora que no tiene círculo */
+    font-weight: 900;
+    font-style: italic; /* Le da más dinamismo */
+    
+    /* Color Dorado Brillante (para que se vea en lo oscuro) */
+    color: #ffd700; 
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); /* Resplandor en las letras */
+    
+    /* Posicionamiento */
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0 10px; /* Un poco de aire a los lados */
+}
+
+/* --- BARRA DE PROGRESO (TUG OF WAR) --- */
+
+/* Wrapper principal: Permite que los sprites se posicionen fuera */
+.war-bar-wrapper {
+    position: relative;
+    height: 40px;      /* Altura de la barra visual */
+    margin-bottom: 4rem; /* Margen extra abajo para que las patas no choquen con las cartas */
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* Contenedor INTERNO: Este sí recorta la barra verde */
+.war-progress-container {
+    width: 100%;
+    height: 100%;
+    /* Fondo = Equipo B (Morado) gana terreno si la barra verde se encoge */
+    background: #9c27b0; 
+    border-radius: 20px;
+    overflow: hidden; /* IMPORTANTE: Recorta la barra, pero NO los sprites */
+    position: relative;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
+    border: 2px solid #333;
+}
+
+.war-progress-bar {
+    height: 100%;
+    /* Barra = Equipo A (Verde) gana terreno */
+    background: #2ed573; 
+    width: 50%;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 25px #2ed573; 
+    position: relative;
+    z-index: 1;
+}
+
+/* Línea divisoria brillante */
+.war-progress-bar::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: #fff;
+    box-shadow: 0 0 15px #fff;
+    z-index: 2;
+}
+
+/* ESTILOS DE LOS SPRITES FLOTANTES */
+.war-sprite {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Centrado vertical exacto */
+    height: 90px; /* Tamaño GRANDE para que sobresalgan */
+    z-index: 10; /* Por encima de todo */
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.6)); /* Sombra para dar profundidad */
+    pointer-events: none; /* Para que no molesten al clickear */
+}
+
+/* Posiciones específicas para sacarlos un poco por los lados */
+.sprite-left {
+    left: -15px; 
+}
+
+.sprite-right {
+    right: -15px;
+}
+
+/* --- COLUMNAS Y TARJETAS --- */
+.war-grids-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.team-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Tarjeta Individual (Base) */
+.war-card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer; /* Mano al pasar por encima */
+    
+    /* Configuración base (Heredada por defecto) */
+    border-left: 6px solid #555;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.war-card:hover {
+    background: #252525;
+}
+
+/* === ESTILOS ESPECÍFICOS POR EQUIPO === */
+
+/* EQUIPO A (Archeops): Estándar (Foto Izq | Borde Izq | Texto Izq) */
+.team-column#col-team-a .war-card {
+    border-left-color: #2ed573; /* Verde */
+}
+
+.team-column#col-team-a .war-card:hover {
+    transform: translateX(5px);
+}
+
+/* EQUIPO B (Aerodactyl): INVERTIDO (Texto Der | Borde Der | Foto Der) */
+.team-column#col-team-b .war-card {
+    flex-direction: row-reverse;     /* Invierte orden: Info - Foto */
+    border-left: none;               /* Quitar borde izq */
+    border-right: 6px solid #ce5cff; /* Poner borde der Morado */
+}
+
+.team-column#col-team-b .war-card:hover {
+    transform: translateX(-5px);     /* Mover a la izquierda al hover */
+}
+
+/* --- INFORMACIÓN DENTRO DE LA TARJETA --- */
+.war-avatar {
+    width: 72px;   
+    height: 72px;
+    object-fit: contain; 
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+.war-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* CENTRADO DEL TEXTO (Para ambos equipos) */
+    justify-content: center;
+    text-align: center;
+}
+
+.war-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #eee;
+}
+
+.war-count {
+    font-size: 1.1rem;
+    color: #aaa;
+    margin-top: 2px;
+}
+
+.war-count strong { 
+    color: #fff; 
+    font-size: 1.3rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .war-grids-container { flex-direction: column; }
+    .war-scoreboard { gap: 10px; }
+    .team-header h1 { font-size: 1.2rem; }
+    .score-box { font-size: 2.5rem; }
+    .vs-badge { width: 50px; height: 50px; font-size: 1.2rem; border-width: 2px; }
+    .war-content { padding: 1rem; }
+    
+    /* Ajuste de sprites en móvil para que no se salgan de la pantalla */
+    .war-sprite { height: 60px; }
+    .sprite-left { left: -5px; }
+    .sprite-right { right: -5px; }
+}
+
+/* =========================================
+   ESTILOS DEL MODAL (POPUP DE CAPTURAS)
+   ========================================= */
+
+.modal-overlay-war {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85); /* Fondo oscuro transparente */
+    z-index: 2000; /* Por encima de todo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay-war.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-content-war {
+    background: #1e1e1e;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
+    border: 1px solid #444;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    overflow: hidden;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay-war.active .modal-content-war {
+    transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.modal-close:hover { color: #ff5555; }
+
+.modal-header {
+    background: #252525;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #333;
+}
+
+.modal-header img {
+    width: 125px;
+    height: 125px;
+    object-fit: contain;
+    background: transparent;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); 
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+/* === MODIFICACIÓN: Scrollbar Personalizado en el Body === */
+.modal-body {
+    padding: 20px;
+    max-height: 60vh; /* Scroll si hay muchas capturas */
+    overflow-y: auto;
+    
+    /* Estilos para Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #555 #1e1e1e;
+}
+
+/* Estilos para Chrome, Edge, Safari */
+.modal-body::-webkit-scrollbar {
+    width: 8px; /* Barra fina */
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Color del fondo para que sea invisible */
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background-color: #444; /* Color de la barra */
+    border-radius: 10px;    /* Muy redondeada */
+    border: 2px solid #1e1e1e; /* Borde interno para efecto "flotante" */
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background-color: #666; /* Un poco más claro al pasar el mouse */
+}
+/* ======================================================== */
+
+.modal-body h3 {
+    text-align: center;
+    color: gold;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Lista de Capturas */
+.capture-row {
+    display: flex;
+    align-items: center;
+    background: #111;
+    margin-bottom: 8px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border-left: 4px solid #555;
+    transition: background 0.2s;
+}
+
+.capture-row:hover { background: #181818; }
+
+.cap-icon {
+    width: 55px; height: 55px;
+    margin-right: 15px;
+    object-fit: contain;
+}
+
+.cap-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.cap-poke { font-weight: bold; color: #fff; text-transform: capitalize; font-size: 1.1rem; }
+.cap-method { font-size: 0.85rem; color: #888; }
+
+.cap-points {
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 1.1rem;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 5px 10px;
+    border-radius: 6px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.hidden { display: none; }
+
+/* === NAVBAR TRANSPARENTE (Solo en ShinyWar) === */
+.page-shinywar .main-nav {
+    background-color: transparent; /* Quita el color de fondo */
+    box-shadow: none; /* Opcional: Quita la sombra si la tiene */
+    background-color: rgba(0, 0, 0, 0.4); /* Negro al 40% de opacidad */
+    backdrop-filter: blur(5px); /* Un extra de desenfoque solo en la barra */
+    position: relative;
+    top: 0;
+    width: 100%;
+    z-index: 100; /* Para asegurar que quede por encima del fondo/contenido */
+}
+
+/* Opcional: Si tienes una línea divisoria (<hr>) debajo del nav, ocúltala también */
+.page-shinywar .divider {
+    display: none;
+}
+
+/* =========================================
+   ESTILOS ESPECÍFICOS DEL TRACKER (Blindados 🛡️)
+   ========================================= */
+
+/* Contenedor principal */
+.tracker-content-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Cabecera y controles */
+.tracker-header-controls {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.4); /* Un poco más oscuro */
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tracker-main-title {
+    font-size: 3rem; 
+    margin-bottom: 10px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.tracker-subtitle {
+    color: #bbb;
+}
+
+/* El input de fecha específico */
+.tracker-date-input {
+    padding: 12px 24px;
+    font-size: 1.3rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+    margin-top: 15px;
+}
+
+.tracker-date-input:hover, .tracker-date-input:focus {
+    background: #333;
+    border-color: #00bcd4;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+}
+
+/* Grid contenedor */
+.tracker-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    padding: 10px;
+}
+
+/* ============================
+   TARJETAS ÚNICAS DEL TRACKER
+   ============================ */
+.tracker-poke-card {
+    background: linear-gradient(180deg, #1e1e1e 0%, #151515 100%);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #333;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.tracker-poke-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: #00bcd4;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.tracker-poke-sprite {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+    transition: transform 0.3s;
+}
+
+.tracker-poke-card:hover .tracker-poke-sprite {
+    transform: scale(1.1);
+}
+
+.tracker-trainer-text {
+    color: #00bcd4;
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 8px 0;
+    letter-spacing: 0.5px;
+}
+
+.tracker-method-text {
+    font-size: 0.75rem; 
+    color: #777; 
+    font-style: italic; 
+    margin-bottom: 8px;
+}
+
+.tracker-date-badge {
+    color: #fff;
+    font-size: 0.8rem;
+    background: #333;
+    padding: 4px 12px;
+    border-radius: 50px;
+    display: inline-block;
+    border: 1px solid #444;
+}
+
+/* Estadísticas */
+.tracker-stats-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.tracker-stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 30px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

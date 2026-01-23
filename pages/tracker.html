@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracker - Team Aura</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/png" href="../icons/tepigfin.png" />
+
+    <style>
+        .coming-soon-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh; /* Ocupa casi toda la pantalla */
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .snorlax-sleep {
+            width: 180px;
+            height: auto;
+            margin-bottom: 1rem;
+            /* Efecto de respiración suave */
+            animation: breathe 4s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        .title-soon {
+            font-size: 4rem; /* Texto GIGANTE */
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 0;
+            /* Gradiente dorado tipo Shiny */
+            background: linear-gradient(to bottom, #ffe066, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 4px 20px rgba(255, 140, 0, 0.4);
+            letter-spacing: 2px;
+        }
+
+        .subtitle-soon {
+            color: #aaa;
+            font-size: 1.5rem;
+            margin-top: 15px;
+            font-family: monospace;
+        }
+
+        /* Animaciones */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ajuste para móviles */
+        @media (max-width: 768px) {
+            .title-soon { font-size: 2.5rem; }
+            .snorlax-sleep { width: 140px; }
+        }
+    </style>
+</head>
+<body class="page-showcase">
+    
+    <nav class="main-nav">
+        <a href="../index.html" class="nav-item nav-start">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/premier-ball.png" />
+            <span>Team Aura</span>
+        </a>
+        <a href="showcase.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shiny-charm.png" />
+            <span>Showcase</span>
+        </a>
+        <a href="shinywar.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lucky-punch.png" />
+            <span>ShinyWar</span>
+        </a>
+        <a href="shinydex.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-radar.png" />
+            <span>ShinyDex</span>
+        </a>
+        <a href="tracker.html" class="nav-item active">
+            <img src="../icons/rotom.png" />
+            <span>Tracker</span>
+        </a>
+    </nav>
+
+    <hr class="divider" />
+
+    <main class="shinydex-content">
+        <div class="coming-soon-container">
+            <img src="../icons/snorlax-sleeping.gif" alt="Snorlax Durmiendo" class="snorlax-sleep">
+            
+            <h1 class="title-soon">COMING SOON...</h1>
+        </div>
+    </main>
+
+    </body>
+</html>

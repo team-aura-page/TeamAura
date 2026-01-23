@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShinyDex - Team Aura</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/png" href="../icons/tepigfin.png" />
+</head>
+<body class="page-showcase">
+    <nav class="main-nav">
+        <a href="../index.html" class="nav-item nav-start">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/premier-ball.png" />
+            <span>Team Aura</span>
+        </a>
+        <a href="showcase.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shiny-charm.png" />
+            <span>Showcase</span>
+        </a>
+        <a href="shinywar.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lucky-punch.png" />
+            <span>ShinyWar</span>
+        </a>
+        <a href="shinydex.html" class="nav-item active">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-radar.png" />
+            <span>ShinyDex</span>
+        </a>
+        <a href="tracker.html" class="nav-item">
+            <img src="../icons/rotom.png" />
+            <span>Tracker</span>
+        </a>
+    </nav>
+
+    <hr class="divider" />
+
+    <main class="shinydex-content">
+        <div class="shinydex-header-container">
+            <div class="controls-row">
+                <div class="search-wrapper">
+                    <input type="text" id="search" placeholder="Buscar Pokémon o Nº..." />
+                </div>
+                <span id="shiny-counter">0 / 0</span>
+            </div>
+        </div>
+
+        <div class="shinydex-body">
+            <div id="shinydex-main" class="shinydex-main"></div>
+
+            <aside id="shinydex-index" class="shinydex-index"></aside>
+        </div>
+    </main>
+
+    <script src="../js/pokemon-gen1-5.js"></script>
+    <script type="module" src="../js/shinydex.js"></script>
+</body>
+</html>

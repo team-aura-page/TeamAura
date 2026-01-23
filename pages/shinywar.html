@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShinyWar - Team Aura</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/png" href="../icons/tepigfin.png" />
+</head>
+<body class="page-shinywar">
+    
+    <nav class="main-nav">
+        <a href="../index.html" class="nav-item nav-start">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/premier-ball.png" />
+            <span>Team Aura</span>
+        </a>
+        <a href="showcase.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shiny-charm.png" />
+            <span>Showcase</span>
+        </a>
+        <a href="shinywar.html" class="nav-item active">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lucky-punch.png" />
+            <span>ShinyWar</span>
+        </a>
+        <a href="shinydex.html" class="nav-item">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-radar.png" />
+            <span>ShinyDex</span>
+        </a>
+        <a href="tracker.html" class="nav-item">
+            <img src="../icons/rotom.png" />
+            <span>Tracker</span>
+        </a>
+    </nav>
+
+    <hr class="divider" />
+
+    <main class="war-content">
+        <div class="war-scoreboard">
+            <div class="team-header team-a">
+                <h1 id="name-team-a">ARCHEOPS</h1>
+                <div class="score-box" id="score-team-a">0</div>
+            </div>
+            
+            <div class="vs-badge">
+                <span>VS</span>
+            </div>
+
+            <div class="team-header team-b">
+                <h1 id="name-team-b">AERODACTYL</h1>
+                <div class="score-box" id="score-team-b">0</div>
+            </div>
+        </div>
+
+        <div class="war-bar-wrapper">
+            <div class="war-progress-container">
+                <div class="war-progress-bar" id="war-bar" style="width: 50%;"></div>
+            </div>
+            
+            <img src="https://play.pokemonshowdown.com/sprites/gen5ani/archeops.gif" 
+                 class="war-sprite sprite-left" 
+                 alt="Archeops">
+            
+            <img src="https://play.pokemonshowdown.com/sprites/gen5ani/aerodactyl.gif" 
+                 class="war-sprite sprite-right" 
+                 alt="Aerodactyl">
+        </div>
+
+        <div class="war-grids-container">
+            <div class="team-column" id="col-team-a">
+                </div>
+
+            <div class="team-column" id="col-team-b">
+                </div>
+        </div>
+    </main>
+
+    <div id="war-modal" class="modal-overlay-war hidden">
+        <div class="modal-content-war">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            
+            <div class="modal-header">
+                <img id="modal-avatar" src="" alt="Avatar">
+                <h2 id="modal-name">Entrenador</h2>
+            </div>
+            
+            <div class="modal-body">
+                <h3>Capturas</h3>
+                <div id="modal-list" class="capture-list">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../js/shinywar.js"></script>
+</body>
+</html>
