@@ -475,4 +475,19 @@ client.on('messageCreate', async message => {
     }
 });
 
-client.login(TOKEN);
+console.log("⏳ Intentando conectar con Discord...");
+
+// 1. Comprobamos si el TOKEN existe
+if (!TOKEN) {
+    console.error("🔴 ERROR FATAL: La variable 'DISCORD_TOKEN' está vacía o no existe en Render.");
+} else {
+    // 2. Intentamos conectar y capturamos cualquier error
+    client.login(TOKEN)
+        .then(() => {
+            console.log("🔵 Login enviado... Esperando confirmación de Discord.");
+        })
+        .catch(error => {
+            console.error("🔴 ERROR CRÍTICO AL CONECTAR:");
+            console.error(error); // Esto imprimirá el error exacto en la consola
+        });
+}
