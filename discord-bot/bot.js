@@ -477,6 +477,13 @@ client.on('messageCreate', async message => {
 
 console.log("⏳ Intentando conectar con Discord...");
 
+fetch('https://discord.com/api/v10/gateway')
+  .then(res => {
+     console.log(`📡 TEST DE CONEXIÓN A DISCORD: Estado ${res.status} (${res.statusText})`);
+     if (res.status === 429) console.error("⛔ ¡CONFIRMADO! Error 429: Too Many Requests (IP Bloqueada).");
+  })
+  .catch(err => console.error("❌ No se puede ni llegar a la web de Discord:", err.message));
+
 // 1. Comprobamos si el TOKEN existe
 if (!TOKEN) {
     console.error("🔴 ERROR FATAL: La variable 'DISCORD_TOKEN' está vacía o no existe en Render.");
