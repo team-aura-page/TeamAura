@@ -348,15 +348,18 @@ client.on('messageCreate', async message => {
     }
 
     // =========================================================
-    // COMANDO 3: !shiny (Solo Dex) - CON VALIDACIÓN Y FECHA 📅
+    // COMANDO 3: !shiny (Dex + Fecha + TIPO + ESTADO FLEE 🏃💨)
     // =========================================================
     if (command === 'shiny') {
         const nombre = args[0];
         const pokemon = args[1];
         
-        if (!nombre || !pokemon) return message.reply('❌ Uso: `!shiny <Entrenador> <Pokemon>`');
+        // Recogemos todos los argumentos extra (args[2], args[3]...)
+        const argumentosExtra = args.slice(2).map(arg => arg.toLowerCase());
 
-        // 1. VALIDACIÓN DE POKÉMON (Anti-Typos)
+        if (!nombre || !pokemon) return message.reply('❌ Uso: `!shiny <Entrenador> <Pokemon> [tipo] [flee]`\nEj: `!shiny Ash Abra safari flee`');
+
+        // 1. VALIDACIÓN DE POKÉMON
         const pokemonApiName = pokemon.toLowerCase().replace(/ /g, '-').replace(/['.]/g, '');
         try {
             const checkPoke = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonApiName}`);
@@ -374,19 +377,59 @@ client.on('messageCreate', async message => {
         const index = usersArray.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
         if (index === -1) return message.reply('❌ Entrenador no encontrado. Usa `!registrar` primero.');
 
-        // 3. PREPARAR DATOS (Con Fecha)
+        // 3. DETECTAR TIPO Y ESTADO (FLEE) 🕵️‍♂️
+        let iconoGuardar = null;
+        let esFlee = false;
+        let infoTexto = "";
+
+        // Diccionario de Tipos
+        const validTypes = {
+            'safari': 'safari',
+            'alpha': 'alpha', 'alfa': 'alpha',
+            'secret': 'secret', 'secreto': 'secret',
+            'fossil': 'fossil', 'fosil': 'fossil',
+            'swarm': 'swarm', 'plaga': 'swarm',
+            'egg': 'egg', 'huevo': 'egg'
+        };
+
+        // Diccionario de "Muerte/Huida"
+        const fleeKeywords = ['flee', 'huido', 'escapo', 'escapado', 'muerto', 'fail', 'f'];
+
+        // Analizamos los argumentos extra uno a uno
+        argumentosExtra.forEach(arg => {
+            if (validTypes[arg]) {
+                iconoGuardar = validTypes[arg];
+            } else if (fleeKeywords.includes(arg)) {
+                esFlee = true;
+            }
+        });
+
+        // 4. PREPARAR DATOS
         if (!usersArray[index].equipo) usersArray[index].equipo = [];
         
-        const today = new Date().toISOString().split('T')[0]; // Fecha actual: "2026-01-22"
+        const today = new Date().toISOString().split('T')[0]; 
 
-        usersArray[index].equipo.push({ 
+        const nuevoShiny = { 
             pokemon: pokemon.toLowerCase(),
-            date: today // <--- AÑADIDO: Para que salga en el Tracker Mensual
-        });
+            date: today
+        };
+
+        // Añadimos las propiedades si existen
+        if (iconoGuardar) {
+            nuevoShiny.icono = iconoGuardar;
+            infoTexto += ` (Tipo: ${iconoGuardar.toUpperCase()})`;
+        }
+
+        if (esFlee) {
+            nuevoShiny.safari = "flee"; // 👈 ESTO HACE QUE SALGA TACHADO/GRIS EN LA WEB
+            infoTexto += ` 💀 **(HUIDO)**`;
+        }
+
+        usersArray[index].equipo.push(nuevoShiny);
         
-        // 4. GUARDAR
+        // 5. GUARDAR Y RESPONDER
         await saveData('users', usersArray);
-        message.reply(`✨ **${pokemon}** añadido a la Dex personal de **${usersArray[index].nombre}** (Fecha: ${today}).`);
+        message.reply(`✨ **${pokemon}** registrado para **${usersArray[index].nombre}**${infoTexto}. 📅 ${today}`);
     }
 
     // =========================================================
