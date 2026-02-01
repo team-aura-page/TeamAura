@@ -1,0 +1,15 @@
+# --- Dependencias (Lo más importante) ---
+# Nunca subas esto, pesa mucho y se instala con 'npm install'
+node_modules/
+
+# --- Logs y Errores ---
+npm-debug.log*
+yarn-debug.log*
+firebase-debug.log*
+.env
+# --- Firebase ---
+.firebase/
+# El archivo de configuración de firebase-tools si usas emuladores
+firebase.json
+data.json
+wars.json

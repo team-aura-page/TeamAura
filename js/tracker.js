@@ -1,14 +1,16 @@
 // ==========================================
-// 1. IMPORTAR FIREBASE
+// 1. IMPORTAR FIREBASE (Database + Auth)
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// 👇 Importamos las funciones de autenticación
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // ==========================================
 // 2. CONFIGURACIÓN
 // ==========================================
 const firebaseConfig = {
-    apiKey: "AIzaSyBmRZZTNFgDaDkHCuF-DMtogH9RNSf_QTU",
+    apiKey: "AIzaSyBmRZZTNfGDaDkHCuf-DMtogH9RNSf_QTU",
     authDomain: "page-aura.firebaseapp.com",
     databaseURL: "https://page-aura-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "page-aura",
@@ -17,139 +19,372 @@ const firebaseConfig = {
     appId: "1:466722575466:web:29583cefae1320c2cc6613"
 };
 
-// ==========================================
-// 3. CONSTANTES Y UTILIDADES
-// ==========================================
-const REPO_URL = "https://raw.githubusercontent.com/team-aura-page/TeamAura/main/";
-
-// ==========================================
-// 4. INICIAR LA APP
-// ==========================================
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app); // 👈 Iniciamos el sistema de Auth
 
 // REFERENCIAS DOM
-const monthSelector = document.getElementById('monthSelector');
-const grid = document.getElementById('trackerGrid');
+const prevBtn = document.getElementById('prevMonthBtn');
+const nextBtn = document.getElementById('nextMonthBtn');
+const monthDisplay = document.getElementById('currentMonthDisplay');
+
+const normalGrid = document.getElementById('trackerGrid');
+const rareGrid = document.getElementById('rareGrid');
+const rareZone = document.getElementById('rareZone');
+const normalTitle = document.getElementById('normalTitle');
 const statsContainer = document.getElementById('statsContainer');
 const totalCount = document.getElementById('totalCount');
+const adminBtn = document.getElementById('adminSaveBtn');
 
-// CONFIGURACIÓN INICIAL DEL CALENDARIO
-const now = new Date();
-const currentMonth = now.toISOString().slice(0, 7); 
-if (monthSelector) {
-    monthSelector.value = currentMonth;
-    monthSelector.addEventListener('change', (e) => {
-        renderMonth(e.target.value);
+// Variables globales
+let globalUsersData = {}; 
+let displayedCaptures = [];
+let isAdmin = false;
+
+// Estado de la fecha actual
+let currentTrackerDate = new Date(); // Empieza hoy
+
+// ==========================================
+// 🔐 SISTEMA DE SEGURIDAD REAL (LOGIN MANUAL)
+// ==========================================
+const urlParams = new URLSearchParams(window.location.search);
+
+// 1. Escuchar si ya estamos logueados (para no pedir pass cada vez que recargues)
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Si Firebase dice que hay usuario, activamos modo Admin
+        enableAdminMode();
+    }
+});
+
+// 2. Si ponen ?admin=true en la URL y NO están logueados, pedimos CREDENCIALES
+if (urlParams.get('admin') === 'true') {
+    // Esperamos un poco para no chocar con la carga inicial
+    setTimeout(() => {
+        if (!auth.currentUser) {
+            
+            // PASO A: Pedir Correo
+            const email = prompt("📧 ZONA ADMIN\nIntroduce tu CORREO de administrador:");
+            
+            if (email) {
+                // PASO B: Pedir Contraseña (solo si escribió correo)
+                const password = prompt("🔒 ZONA ADMIN\nIntroduce tu CONTRASEÑA:");
+                
+                if (password) {
+                    // PASO C: Intentar Login con lo que ha escrito
+                    signInWithEmailAndPassword(auth, email, password)
+                        .then(() => {
+                            alert("✅ Acceso concedido. Conectado a la base de datos.");
+                            // El onAuthStateChanged de arriba activará la interfaz
+                        })
+                        .catch((error) => {
+                            console.error("Error Auth:", error);
+                            alert("❌ Error: Correo o contraseña incorrectos.");
+                        });
+                }
+            }
+        }
+    }, 500);
+}
+
+function enableAdminMode() {
+    if (isAdmin) return; // Si ya es admin, no hacemos nada
+    isAdmin = true;
+    if (adminBtn) adminBtn.style.display = 'block';
+    console.log("🔓 MODO ADMIN ACTIVADO (Usuario Autenticado)");
+    
+    // Recargamos la interfaz para que aparezcan los bordes de edición, etc.
+    updateMonthUI(); 
+}
+
+// ==========================================
+// 📅 LÓGICA DE NAVEGACIÓN DE MESES
+// ==========================================
+
+function updateMonthUI() {
+    // 1. Nombre del mes (ej: "febrero")
+    const monthName = currentTrackerDate.toLocaleDateString('es-ES', { month: 'long' });
+    
+    // 2. Capitalizar (ej: "Febrero")
+    const monthCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    
+    // 3. Año (ej: 2026)
+    const year = currentTrackerDate.getFullYear();
+
+    // 4. METER EL HUECO 🚀
+    // Usamos innerHTML para poder poner un <span> con margen
+    if (monthDisplay) {
+        // Puedes cambiar el '15px' por el tamaño de hueco que quieras
+        monthDisplay.innerHTML = `${monthCapitalized} <span style="margin-left: 10px;">${year}</span>`;
+    }
+
+    // --- EL RESTO SIGUE IGUAL ---
+    const monthNum = String(currentTrackerDate.getMonth() + 1).padStart(2, '0');
+    const formattedDateKey = `${year}-${monthNum}`;
+
+    if (displayedCaptures.length > 0 || Object.keys(globalUsersData).length > 0) {
+        if (displayedCaptures.length === 0 && Object.keys(globalUsersData).length === 0) {
+           // Esperamos
+        } else {
+           renderMonth(formattedDateKey);
+        }
+    }
+}
+
+if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+        currentTrackerDate.setMonth(currentTrackerDate.getMonth() - 1);
+        updateMonthUI();
+    });
+    nextBtn.addEventListener('click', () => {
+        currentTrackerDate.setMonth(currentTrackerDate.getMonth() + 1);
+        updateMonthUI();
     });
 }
 
-// VARIABLE GLOBAL
-let allCaptures = [];
-
 // ==========================================
-// 5. LÓGICA DEL TRACKER (CORREGIDA ✅)
+// 3. CARGAR DATOS
 // ==========================================
 
 async function loadData() {
     try {
-        console.log("📡 Conectando a Firebase...");
-        
+        console.log("📡 Cargando datos...");
         const snapshot = await get(ref(db, 'users'));
         const data = snapshot.val();
 
-        if (!data) {
-            grid.innerHTML = '<h3 style="grid-column: 1/-1; text-align:center;">No hay datos en la base de datos.</h3>';
-            return;
-        }
+        if (!data) return;
 
-        allCaptures = [];
-        const warsList = Array.isArray(data) ? data : Object.values(data);
-        
-        // --- 🛡️ AQUÍ ESTÁ EL ARREGLO DE SEGURIDAD ---
-        warsList.forEach(war => {
-            if (war && war.captures) { // Verificamos que 'war' existe
-                const capturesList = Array.isArray(war.captures) ? war.captures : Object.values(war.captures);
-                
-                // Limpiamos los nulos antes de guardarlos
-                capturesList.forEach(cap => {
-                    // Solo guardamos si la captura existe (no es null) Y tiene fecha
-                    if (cap && cap.date) {
-                        allCaptures.push(cap);
+        globalUsersData = data;
+        displayedCaptures = [];
+
+        Object.keys(data).forEach(userKey => {
+            const user = data[userKey];
+            if (user && user.equipo) {
+                Object.keys(user.equipo).forEach(pokeKey => {
+                    const poke = user.equipo[pokeKey];
+                    if (poke) {
+                        const captureData = {
+                            ...poke,
+                            trainer: user.nombre || 'Anónimo',
+                            refPath: `users/${userKey}/equipo/${pokeKey}`
+                        };
+                        
+                        if (!captureData.date) {
+                            captureData.date = "2024-01-01"; 
+                            captureData.isLegacy = true;
+                        }
+
+                        displayedCaptures.push(captureData);
                     }
                 });
             }
         });
-        // ---------------------------------------------
 
-        console.log(`✅ Datos limpios cargados: ${allCaptures.length} capturas.`);
-        
-        if (monthSelector) {
-            renderMonth(monthSelector.value);
-        }
+        updateMonthUI();
 
     } catch (error) {
-        console.error("❌ Error:", error);
-        if (grid) grid.innerHTML = `<h3 style="color: red; text-align:center;">Error: ${error.message}</h3>`;
+        console.error("Error cargando:", error);
+        if (normalGrid) normalGrid.innerHTML = '<p>Error cargando datos.</p>';
     }
 }
 
+// ==========================================
+// 4. PINTAR (MODO GOLD ACTIVADO 🏆)
+// ==========================================
 function renderMonth(selectedMonth) {
-    if (!grid) return;
-    
-    // Filtramos usando la fecha limpia
-    const filtered = allCaptures.filter(c => c.date.startsWith(selectedMonth));
-    
-    // Ordenamos
+    const filtered = displayedCaptures.filter(c => c.date && c.date.startsWith(selectedMonth));
     filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // UI Updates
-    if (statsContainer) statsContainer.style.display = 'flex';
     if (totalCount) totalCount.innerText = filtered.length;
+    if (statsContainer) statsContainer.style.display = 'flex';
 
-    grid.innerHTML = '';
+    if (normalGrid) normalGrid.innerHTML = '';
+    if (rareGrid) rareGrid.innerHTML = '';
+    const leaderboardDiv = document.getElementById('leaderboard');
+    if (leaderboardDiv) leaderboardDiv.innerHTML = ''; 
 
     if (filtered.length === 0) {
-        grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 50px; opacity: 0.6;">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/201-question.png" style="width:100px;">
-                <p>Ningún shiny registrado este mes... 😴</p>
+        if (rareZone) rareZone.style.display = 'none';
+        if (normalTitle) normalTitle.style.display = 'none';
+        
+        if (normalGrid) normalGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; opacity: 0.6; color: #ccc;">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/201-question.png" style="width:100px; margin-bottom: 20px;">
+                <p style="font-size: 1.2rem;">Ningún shiny registrado en este mes... </p>
             </div>
         `;
-        return;
+        return; 
     }
 
-    const fragment = document.createDocumentFragment();
+    // LEADERBOARD
+    if (leaderboardDiv) {
+        // 1. CONFIGURA AQUÍ TUS IMÁGENES
+        const MEDAL_IMAGES = [
+            "../icons/primer-puesto.png",   // Imagen para el 1º
+            "../icons/segundo-puesto.png", // Imagen para el 2º
+            "../icons/tercer-puesto.png"  // Imagen para el 3º
+        ];
+
+        const counts = {};
+        filtered.forEach(cap => {
+            const trainer = cap.trainer || "Anónimo";
+            counts[trainer] = (counts[trainer] || 0) + 1;
+        });
+
+        const sortedRanking = Object.entries(counts)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 3); 
+
+        let rankHTML = '';
+        
+        sortedRanking.forEach((item, index) => {
+            let medalContent = '';
+            let rankClass = '';
+
+            // Asignamos clase y la imagen correspondiente según el índice (0, 1, 2)
+            if (index === 0) { 
+                rankClass = 'rank-1'; 
+                medalContent = `<img src="${MEDAL_IMAGES[0]}" class="custom-medal" alt="1º">`;
+            } 
+            else if (index === 1) { 
+                rankClass = 'rank-2'; 
+                medalContent = `<img src="${MEDAL_IMAGES[1]}" class="custom-medal" alt="2º">`;
+            } 
+            else if (index === 2) { 
+                rankClass = 'rank-3'; 
+                medalContent = `<img src="${MEDAL_IMAGES[2]}" class="custom-medal" alt="3º">`;
+            }
+
+            // Construimos el HTML
+            rankHTML += `
+                <div class="leaderboard-item ${rankClass}">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        ${medalContent}
+                        <span style="font-weight: bold;">${item.name}</span>
+                    </div>
+                    <span class="rank-count">${item.count}</span>
+                </div>
+            `;
+        });
+        leaderboardDiv.innerHTML = rankHTML;
+    }
+
+    // CARTAS
+    let hasRares = false;
 
     filtered.forEach(capture => {
-        const card = document.createElement('div');
-        card.className = 'shiny-card';
+        const isRare = capture.rarity === 'rare';
+        if (isRare) hasRares = true;
+
+        const card = createCard(capture);
         
-        const fechaParts = capture.date.split('-');
-        const fechaBonita = `${fechaParts[2]}/${fechaParts[1]}`;
+        // --- 1. ESTÉTICA (PARA TODOS) ---
+        // Aquí aplicamos el borde dorado y la clase CSS para que TODOS lo vean
+        if (isRare) {
+            card.classList.add('is-rare'); // Activa el brillo del CSS
+            card.style.border = "2px solid #ffd700"; // Borde dorado
+        } else {
+            card.style.border = "1px solid #333";
+        }
+        
+        // --- 2. FUNCIONALIDAD (SOLO ADMIN) ---
+        // Solo el admin puede hacer clic para editar
+        if (isAdmin) {
+            card.style.cursor = "pointer";
+            card.title = "ADMIN: Clic para cambiar rareza";
+            card.onclick = () => toggleRarity(capture, selectedMonth); 
+        }
 
-        const spriteUrl = `https://play.pokemonshowdown.com/sprites/gen5ani-shiny/${capture.pokemon}.gif`;
-
-        card.innerHTML = `
-            <div class="team-badge">
-                ${capture.team === 'A' ? '🌿' : '🟣'}
-            </div>
-            <img src="${spriteUrl}" alt="${capture.pokemon}" class="shiny-sprite" 
-                 onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
-            
-            <h3 style="text-transform: capitalize; margin:0;">${capture.pokemon}</h3>
-            <div class="trainer-name">${capture.trainer}</div>
-            
-            <div style="font-size: 0.8rem; color: #aaa; margin-top:5px; font-style: italic;">
-                ${capture.method || 'Método desconocido'}
-            </div>
-            
-            <div class="capture-date">📅 ${fechaBonita}</div>
-        `;
-        fragment.appendChild(card);
+        // --- 3. COLOCACIÓN ---
+        if (isRare) {
+            if (rareGrid) rareGrid.appendChild(card);
+        } else {
+            if (normalGrid) normalGrid.appendChild(card);
+        }
     });
 
-    grid.appendChild(fragment);
+    if (hasRares || isAdmin) {
+        if (rareZone) rareZone.style.display = 'block';
+        if (normalTitle) normalTitle.style.display = 'block';
+    } else {
+        if (rareZone) rareZone.style.display = 'none';
+        if (normalTitle) normalTitle.style.display = 'none';
+    }
 }
 
+function createCard(capture) {
+    const card = document.createElement('div');
+    card.className = 'tracker-poke-card'; 
+
+    const pokeName = (capture.pokemon || 'unown').toLowerCase();
+    const spriteUrl = `https://play.pokemonshowdown.com/sprites/gen5ani-shiny/${pokeName}.gif`;
+    
+    let fechaBonita = "??/??";
+    if (capture.date && capture.date.includes('-')) {
+        const parts = capture.date.split('-'); 
+        fechaBonita = `${parts[2]}/${parts[1]}`;
+    }
+
+    card.innerHTML = `
+        <img src="${spriteUrl}" alt="${pokeName}" class="tracker-poke-sprite" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+        <h3 style="text-transform: capitalize; margin: 0; color: white; font-size: 1.2rem;">${pokeName}</h3>
+        <div class="tracker-trainer-text">${capture.trainer}</div>
+        <div class="tracker-date-badge">📅 ${fechaBonita}</div>
+    `;
+    return card;
+}
+
+// ==========================================
+// 5. FUNCIONES DE GUARDADO (ADMIN)
+// ==========================================
+
+function toggleRarity(capture, selectedMonth) {
+    if (capture.rarity === 'rare') {
+        delete capture.rarity;
+    } else {
+        capture.rarity = 'rare';
+    }
+    
+    renderMonth(selectedMonth);
+
+    if (adminBtn) {
+        adminBtn.innerText = "💾 HAY CAMBIOS SIN GUARDAR";
+        adminBtn.style.background = "#ff9800";
+    }
+}
+
+if (adminBtn) {
+    adminBtn.addEventListener('click', async () => {
+        try {
+            adminBtn.innerText = "⏳ Guardando...";
+            adminBtn.style.background = "#9e9e9e";
+            
+            const updates = {};
+            
+            displayedCaptures.forEach(cap => {
+                const rarityValue = cap.rarity === 'rare' ? 'rare' : null;
+                updates[`${cap.refPath}/rarity`] = rarityValue;
+            });
+
+            await update(ref(db), updates);
+
+            adminBtn.innerText = "✅ CAMBIOS GUARDADOS";
+            adminBtn.style.background = "#4caf50";
+            
+            setTimeout(() => {
+                adminBtn.innerText = "💾 GUARDAR CAMBIOS";
+                adminBtn.style.background = "#e91e63";
+            }, 2000);
+
+        } catch (error) {
+            console.error("Error guardando:", error);
+            alert("❌ Error: No tienes permiso de escritura. ¿Estás logueado como Admin?");
+            adminBtn.innerText = "❌ ERROR PERMISO";
+            adminBtn.style.background = "#f44336";
+        }
+    });
+}
+
+// Arrancar
 loadData();
