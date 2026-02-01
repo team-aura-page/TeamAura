@@ -102,23 +102,48 @@ function enableAdminMode() {
 // ==========================================
 
 function updateMonthUI() {
-    // 1. Nombre del mes (ej: "febrero")
+    // 1. PINTAR EL TÍTULO (Mes y Año)
     const monthName = currentTrackerDate.toLocaleDateString('es-ES', { month: 'long' });
-    
-    // 2. Capitalizar (ej: "Febrero")
     const monthCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-    
-    // 3. Año (ej: 2026)
     const year = currentTrackerDate.getFullYear();
 
-    // 4. METER EL HUECO 🚀
-    // Usamos innerHTML para poder poner un <span> con margen
     if (monthDisplay) {
-        // Puedes cambiar el '15px' por el tamaño de hueco que quieras
         monthDisplay.innerHTML = `${monthCapitalized} <span style="margin-left: 10px;">${year}</span>`;
     }
 
-    // --- EL RESTO SIGUE IGUAL ---
+    // ====================================================
+    // 🛑 ZONA DE LÍMITES (BLOQUEO DE BOTONES)
+    // ====================================================
+    
+    // --- LÍMITE 1: EL PASADO (Enero 2026) ---
+    // Si estamos en Enero (0) de 2026, bloqueamos ir atrás.
+    const isStartLimit = (year === 2026 && currentTrackerDate.getMonth() === 0);
+
+    if (prevBtn) {
+        if (isStartLimit) {
+            prevBtn.style.opacity = "0.2";
+            prevBtn.style.pointerEvents = "none";
+        } else {
+            prevBtn.style.opacity = "1";
+            prevBtn.style.pointerEvents = "auto";
+        }
+    }
+
+    const realDate = new Date();
+        const isFutureLimit = (
+        year === realDate.getFullYear() && 
+        currentTrackerDate.getMonth() === realDate.getMonth()
+    );
+
+    if (nextBtn) {
+        if (isFutureLimit) {
+            nextBtn.style.opacity = "0.2";
+            nextBtn.style.pointerEvents = "none";
+        } else {
+            nextBtn.style.opacity = "1";
+            nextBtn.style.pointerEvents = "auto";
+        }
+    }
     const monthNum = String(currentTrackerDate.getMonth() + 1).padStart(2, '0');
     const formattedDateKey = `${year}-${monthNum}`;
 

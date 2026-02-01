@@ -1715,10 +1715,6 @@ font-size: 2rem;
     gap: 30px;
 }
 
-.rare-header img{
-    margin-bottom: -10px;   
-}
-
 /* ✨ ESTILOS PARA LAS CARTAS RARAS (Para todos los usuarios) */
 .tracker-poke-card.is-rare {
     border: 2px solid #ffd700 !important; /* Borde dorado forzado */
