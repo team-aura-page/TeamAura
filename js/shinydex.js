@@ -124,17 +124,28 @@ function showTooltip(e) {
 
     const owners = JSON.parse(ownersData);
     const ownersList = owners.map(o => `<li>${o}</li>`).join("");
-    const needsScroll = owners.length > 5;
-    const scrollClass = needsScroll ? 'scrolling' : '';
 
+    // 1. Renderizamos el HTML base (sin la clase scrolling aún)
     tooltipElement.innerHTML = `
         <span class="tooltip-title">Capturado por (${owners.length})</span>
         <div class="tooltip-scroll-mask">
-            <ul class="tooltip-names ${scrollClass}">
+            <ul class="tooltip-names">
                 ${ownersList}
             </ul>
         </div>
     `;
+
+    const listElement = tooltipElement.querySelector('.tooltip-names');
+
+    if (owners.length > 3) {
+        listElement.classList.add('scrolling');
+        const duration = 2 + (owners.length * 0.8);       
+        listElement.style.animationDuration = `${duration}s`;
+        
+    } else {
+        listElement.classList.remove('scrolling');
+        listElement.style.animationDuration = '0s';
+    }
 
     tooltipElement.classList.add('visible');
     moveTooltip(e); 
@@ -218,7 +229,6 @@ function initShinyDex(dexData) {
         index.appendChild(link);
     });
 
-    // Animaciones
     setTimeout(() => {
         const totalPokes = GEN1_5_POKEMON.length;
         animateValue(counterGlobal, 0, Math.round((globalCaptured/totalPokes)*100), 1500, true, globalCaptured, totalPokes);

@@ -323,6 +323,15 @@ h1, h2, h3, h4 {
     margin-bottom: 5px;
 }
 
+#secret-trigger {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#secret-trigger:active {
+    transform: scale(0.95);
+}
+
 .shiny-counter {
     color: #b5b5b5;
     font-weight: bold;
@@ -1771,4 +1780,18 @@ font-size: 2rem;
     min-width: 200px;
     text-align: center;
     font-family: 'PokemonFireRed', monospace;
+}
+
+body.system-mode,
+body.system-mode * {
+    cursor: auto !important; 
+}
+
+/* Recuperamos la manita solo en enlaces/botones */
+body.system-mode a, 
+body.system-mode button,
+body.system-mode .staff-card,
+body.system-mode .nav-arrow-btn,
+body.system-mode .tracker-poke-card {
+    cursor: pointer !important;
 }
