@@ -27,10 +27,10 @@ const GEN1_5_POKEMON = [
     { id: 26, name: "raichu" },
     { id: 27, name: "sandshrew" },
     { id: 28, name: "sandslash" },
-    { id: 29, name: "nidoranf" }, // ID oficial Nidoran♀
+    { id: 29, name: "nidoranf" },
     { id: 30, name: "nidorina" },
     { id: 31, name: "nidoqueen" },
-    { id: 32, name: "nidoranm" }, // ID oficial Nidoran♂
+    { id: 32, name: "nidoranm" },
     { id: 33, name: "nidorino" },
     { id: 34, name: "nidoking" },
     { id: 35, name: "clefairy" },

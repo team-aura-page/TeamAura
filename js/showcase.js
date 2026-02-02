@@ -1,12 +1,6 @@
-// ==========================================
-// 1. IMPORTAR FIREBASE (Versión 12.8.0)
-// ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
-// ==========================================
-// 2. CONFIGURACIÓN
-// ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyBmRZZTNFgDaDkHCuF-DMtogH9RNSf_QTU",
     authDomain: "page-aura.firebaseapp.com",
@@ -16,38 +10,19 @@ const firebaseConfig = {
     messagingSenderId: "466722575466",
     appId: "1:466722575466:web:29583cefae1320c2cc6613"
 };
-
-// ==========================================
-// ✅ NUEVO: CONSTANTE BASE PARA IMÁGENES
-// ==========================================
-// Esto apunta directamente a tu repositorio en la nube. ¡Nunca fallará!
 const REPO_URL = "https://raw.githubusercontent.com/team-aura-page/TeamAura/main/";
 
-// ✅ NUEVO: FUNCIÓN MAGICA PARA ARREGLAR RUTAS
 function fixPath(path) {
-    // 1. Si no hay path, devolvemos el Unown por defecto desde la nube
-    if (!path) return REPO_URL + 'icons/unown.png';
-    
-    // 2. Si ya es una imagen de internet completa (https://...), la dejamos tal cual
+    if (!path) return REPO_URL + 'icons/unown.png'; 
     if (path.startsWith('http')) return path;
-
-    // 3. Limpieza: Quitamos los "../" o "./" del principio si vienen de Firebase o del código viejo
     const cleanPath = path.replace(/^(\.\.\/|\.\/)/, ''); 
-    
-    // 4. Devolvemos la ruta absoluta
     return REPO_URL + cleanPath;
 }
-
-// ==========================================
-// 3. INICIAR LA APP
-// ==========================================
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Configuración de URLs e Iconos
 const URL_SHINY = "https://play.pokemonshowdown.com/sprites/gen5ani-shiny/";
 
-// ✅ ACTUALIZADO: Usamos fixPath aquí también para evitar errores en los iconos
 const ICON_URLS = {
     "fossil": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/helix-fossil.png",
     "safari": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/safari-ball.png",
@@ -58,10 +33,6 @@ const ICON_URLS = {
 };
 
 let allPlayersData = []; 
-
-// ==========================================
-// 4. CONEXIÓN EN TIEMPO REAL (Listener)
-// ==========================================
 const usersRef = ref(db, 'users');
 
 onValue(usersRef, (snapshot) => {
@@ -80,11 +51,6 @@ onValue(usersRef, (snapshot) => {
     
     setTimeout(() => preloadAllImages(dataArray), 500);
 });
-
-// ==========================================
-// 5. FUNCIONES VISUALES
-// ==========================================
-
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 
@@ -115,7 +81,6 @@ function handleFilters() {
     renderShowcase(filteredList);
 }
 
-// --- RENDERIZADO DEL GRID ---
 function renderShowcase(jugadores) {
     const grid = document.getElementById('showcase-grid');
     if (!grid) return;
@@ -126,7 +91,6 @@ function renderShowcase(jugadores) {
         return;
     }
 
-    // Cálculo de medallas
     const todosLosPuntosGlobales = allPlayersData.map(jugador => {
         const eq = jugador.equipo || [];
         return eq.filter(poke => poke.safari !== 'flee' && poke.live !== 'no').length;
@@ -153,7 +117,6 @@ function renderShowcase(jugadores) {
         card.className = 'staff-card'; 
         card.style.cursor = 'pointer'; 
 
-        // ✅ AQUI ESTABA EL ERROR: Usamos fixPath() para el avatar
         const avatarUrl = fixPath(jugador.avatar);
 
         card.innerHTML = `
@@ -175,11 +138,9 @@ function preloadAllImages(jugadores) {
     if (!Array.isArray(jugadores)) return;
     const imagesToLoad = new Set();
     
-    // ✅ Arreglamos ruta también en precarga
     imagesToLoad.add(fixPath('icons/sparkle.gif'));
 
     jugadores.forEach(jugador => {
-        // ✅ Arreglamos ruta de avatar en precarga
         if (jugador.avatar) imagesToLoad.add(fixPath(jugador.avatar));
 
         const equipo = jugador.equipo || [];
@@ -201,9 +162,6 @@ function preloadAllImages(jugadores) {
     }, 1000);
 }
 
-// ==========================================
-// 6. MODAL
-// ==========================================
 const modal = document.getElementById('modal-overlay');
 const closeBtn = document.getElementById('close-btn');
 
@@ -213,7 +171,6 @@ function openModal(jugador) {
     document.getElementById('modal-name').innerText = jugador.nombre;
     const avatar = document.getElementById('modal-avatar');
     
-    // ✅ AQUI TAMBIÉN ESTABA EL ERROR: Usamos fixPath() en el modal
     avatar.src = fixPath(jugador.avatar);
     
     const modalRole = document.getElementById('modal-role');
@@ -244,7 +201,6 @@ function openModal(jugador) {
         }
 
         const imgSparkle = document.createElement('img');
-        // ✅ Arreglamos ruta sparkle
         imgSparkle.src = fixPath('icons/sparkle.gif'); 
         imgSparkle.className = 'poke-sparkle-effect';
 

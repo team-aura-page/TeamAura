@@ -13,7 +13,6 @@ server.listen(port, () => {
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, get, set } = require("firebase/database");
-// 👇 NUEVO: Importamos la autenticación
 const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
 
 
@@ -29,14 +28,10 @@ const firebaseConfig = {
   appId: "1:466722575466:web:29583cefae1320c2cc6613"
 };
 
-// INICIALIZAR FIREBASE
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const auth = getAuth(app); // 👈 Iniciamos Auth
+const auth = getAuth(app);
 
-// ==========================================
-// 🔐 AUTO-LOGIN DEL BOT (NUEVO BLOQUE)
-// ==========================================
 async function loginBot() {
     try {
         const email = process.env.FIREBASE_EMAIL;
@@ -54,7 +49,6 @@ async function loginBot() {
     }
 }
 
-// Ejecutamos el login nada más arrancar
 loginBot();
 
 // ==========================================
@@ -65,7 +59,6 @@ const VALID_ICONS = [
     'safari', 'swarm', 'secret'
 ];
 
-// INICIALIZAR DISCORD
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -74,11 +67,6 @@ const client = new Client({
     ]
 });
 
-// ==========================================
-// 2. FUNCIONES DE AYUDA (DATABASE)
-// ==========================================
-
-// Función para leer datos de una ruta específica
 async function getData(path) {
     try {
         const snapshot = await get(ref(db, path));
@@ -93,7 +81,6 @@ async function getData(path) {
     }
 }
 
-// Función para guardar datos
 async function saveData(path, data) {
     try {
         await set(ref(db, path), data);
@@ -104,10 +91,6 @@ async function saveData(path, data) {
     }
 }
 
-// ==========================================
-// 3. EVENTOS DEL BOT
-// ==========================================
-
 client.once('ready', () => {
     console.log(`✅ Bot Aura (Firebase + Manual Mode) conectado como ${client.user.tag}`);
 });
@@ -116,7 +99,6 @@ client.on('messageCreate', async message => {
     if (message.author.bot) return;
     if (!message.content.startsWith('!')) return;
 
-    // Separar argumentos respetando comillas si las hubiera
     const args = message.content.slice(1).match(/(?:[^\s"]+|"[^"]*")+/g)?.map(arg => arg.replace(/^"|"$/g, '')) || [];
     if (args.length === 0) return;
     
@@ -146,7 +128,7 @@ client.on('messageCreate', async message => {
                         '`!registrar <Nombre> <Avatar>` - Crear perfil.',
                         '`!invitado <Nombre> <A/B>` - Añadir invitado a la guerra.',
                         '`!equipoa <Nombres>` / `!equipob <Nombres>` - Asignar bandos.',
-                        '`!shiny <Nombre> <Pokemon>` - Solo Dex (sin war).'
+                        '`!shiny <Nombre> <Pokemon> <Icono> <Flee o no>` - Solo Dex (sin war).'
                     ].join('\n')
                 }
             )
@@ -163,20 +145,17 @@ client.on('messageCreate', async message => {
 
         if (!nombre || !avatar) return message.reply('❌ Uso: `!registrar <Nombre> <URL_Avatar>`');
 
-        // LEER usuarios actuales
         let users = await getData('users');
-        if (!users) users = []; // Si está vacía, iniciamos array
+        if (!users) users = [];
         
-        // Convertir objeto a array si Firebase devolvió objeto
         let usersArray = Array.isArray(users) ? users : Object.values(users);
 
         if (usersArray.find(p => p.nombre.toLowerCase() === nombre.toLowerCase())) {
             return message.reply(`⚠️ **${nombre}** ya está registrado.`);
         }
 
-        // Añadir nuevo usuario
         usersArray.push({ 
-            id: Date.now(), // ID único simple
+            id: Date.now(),
             nombre: nombre, 
             avatar: avatar, 
             equipo: [] 
@@ -196,7 +175,6 @@ client.on('messageCreate', async message => {
             const pokemon = args[1];
             const puntosArg = args[2];
             
-            // 1. Validaciones Básicas
             if (!nombreEntrenador || !pokemon || !puntosArg) {
                 return message.reply('❌ Uso: `!shinywar <Trainer> <Pokemon> <Puntos> [Icono] <Texto>`\nEj: `!shinywar Ash Eevee 15 egg Masuda`');
             }
@@ -204,9 +182,6 @@ client.on('messageCreate', async message => {
             const puntos = parseInt(puntosArg);
             if (isNaN(puntos)) return message.reply('❌ Los puntos deben ser un número.');
 
-            // =======================================================
-            // 🛡️ VALIDACIÓN DE POKÉMON (PokeAPI)
-            // =======================================================
             const pokemonApiName = pokemon.toLowerCase().replace(/ /g, '-').replace(/['.]/g, '');
             
             try {
@@ -218,27 +193,23 @@ client.on('messageCreate', async message => {
                 console.warn("⚠️ PokeAPI no responde, saltando validación.");
             }
 
-            // 2. Detección Inteligente de Icono
             let detectedIcon = null;
             let startIndexTexto = 3; 
             const posibleIcono = args[3] ? args[3].toLowerCase() : '';
 
-            // Asegúrate de que VALID_ICONS esté definido arriba en tu bot.js
             if (typeof VALID_ICONS !== 'undefined' && VALID_ICONS.includes(posibleIcono)) {
                 detectedIcon = posibleIcono;
-                startIndexTexto = 4; // Saltamos la palabra del icono
+                startIndexTexto = 4;
             }
 
             const textoMetodo = args.slice(startIndexTexto).join(' ');
             if (!textoMetodo) return message.reply('❌ Falta el texto del método.');
 
-            // 3. CARGAR DATOS
             let users = await getData('users') || [];
             let wars = await getData('wars') || {};
             
             let usersArray = Array.isArray(users) ? users : Object.values(users);
             
-            // Buscar guerra activa
             let warsList = [];
             if (wars.wars) {
                 warsList = Array.isArray(wars.wars) ? wars.wars : Object.values(wars.wars);
@@ -251,7 +222,6 @@ client.on('messageCreate', async message => {
             
             const activeWar = warsList[activeWarIndex];
 
-            // 4. Buscar Jugador
             let realName = nombreEntrenador;
             let isGuest = false;
             
@@ -260,7 +230,6 @@ client.on('messageCreate', async message => {
             if (playerIndex !== -1) {
                 realName = usersArray[playerIndex].nombre;
             } else {
-                // Buscar en invitados
                 const teamA = activeWar.teams?.A || [];
                 const teamB = activeWar.teams?.B || [];
                 const allPlayers = [...teamA, ...teamB];
@@ -275,33 +244,26 @@ client.on('messageCreate', async message => {
                 }
             }
 
-            // 5. Verificar Equipo
             let team = null;
             if (activeWar.teams?.A?.includes(realName)) team = 'A';
             else if (activeWar.teams?.B?.includes(realName)) team = 'B';
 
             if (!team) return message.reply(`⚠️ **${realName}** no tiene equipo asignado.`);
 
-            // =======================================================
-            // 📅 DEFINIR FECHA AQUÍ (Para que la usen AMBOS sitios)
-            // =======================================================
             const today = new Date().toISOString().split('T')[0];
 
-            // 6. GUARDAR EN DEX PERSONAL (Si no es invitado)
             if (!isGuest && playerIndex !== -1) {
                 const dexShiny = { 
                     pokemon: pokemon.toLowerCase(),
-                    date: today, // <--- ✅ AHORA SÍ SE GUARDA LA FECHA EN EL USUARIO
+                    date: today,
                     method: textoMetodo
                 };
                 
                 if (detectedIcon) dexShiny.icono = detectedIcon;
                 
-                // Lógica especial de puntos 0
                 if (puntos === 0) dexShiny.live = 'no'; 
                 if (puntos === 0 && detectedIcon === 'safari') dexShiny.safari = 'flee';
 
-                // Guardamos el equipo que tenía en ese momento
                 dexShiny.team = team; 
 
                 if (!usersArray[playerIndex].equipo) usersArray[playerIndex].equipo = [];
@@ -310,14 +272,13 @@ client.on('messageCreate', async message => {
                 await saveData('users', usersArray);
             }
 
-            // 7. GUARDAR EN WAR (Historial de Guerra)
             if (!activeWar.captures) activeWar.captures = [];
 
             activeWar.captures.push({
                 trainer: realName,
                 team: team,
                 pokemon: pokemon.toLowerCase(),
-                date: today, // <--- También se guarda aquí
+                date: today,
                 method: textoMetodo,
                 points: puntos,
                 iconKey: detectedIcon
@@ -326,7 +287,6 @@ client.on('messageCreate', async message => {
             wars.wars = warsList; 
             await saveData('wars', wars);
 
-            // 8. FEEDBACK (Mensaje bonito)
             const teamColor = team === 'A' ? '#2ed573' : '#9c27b0';
             const embed = new EmbedBuilder()
                 .setColor(teamColor)
@@ -354,12 +314,10 @@ client.on('messageCreate', async message => {
         const nombre = args[0];
         const pokemon = args[1];
         
-        // Recogemos todos los argumentos extra (args[2], args[3]...)
         const argumentosExtra = args.slice(2).map(arg => arg.toLowerCase());
 
         if (!nombre || !pokemon) return message.reply('❌ Uso: `!shiny <Entrenador> <Pokemon> [tipo] [flee]`\nEj: `!shiny Ash Abra safari flee`');
 
-        // 1. VALIDACIÓN DE POKÉMON
         const pokemonApiName = pokemon.toLowerCase().replace(/ /g, '-').replace(/['.]/g, '');
         try {
             const checkPoke = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonApiName}`);
@@ -370,19 +328,16 @@ client.on('messageCreate', async message => {
             console.warn("⚠️ PokeAPI no responde, saltando validación.");
         }
 
-        // 2. BUSCAR USUARIO
         let users = await getData('users') || [];
         let usersArray = Array.isArray(users) ? users : Object.values(users);
         
         const index = usersArray.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
         if (index === -1) return message.reply('❌ Entrenador no encontrado. Usa `!registrar` primero.');
 
-        // 3. DETECTAR TIPO Y ESTADO (FLEE) 🕵️‍♂️
         let iconoGuardar = null;
         let esFlee = false;
         let infoTexto = "";
 
-        // Diccionario de Tipos
         const validTypes = {
             'safari': 'safari',
             'alpha': 'alpha', 'alfa': 'alpha',
@@ -392,10 +347,8 @@ client.on('messageCreate', async message => {
             'egg': 'egg', 'huevo': 'egg'
         };
 
-        // Diccionario de "Muerte/Huida"
         const fleeKeywords = ['flee', 'huido', 'escapo', 'escapado', 'muerto', 'fail', 'f'];
 
-        // Analizamos los argumentos extra uno a uno
         argumentosExtra.forEach(arg => {
             if (validTypes[arg]) {
                 iconoGuardar = validTypes[arg];
@@ -404,7 +357,6 @@ client.on('messageCreate', async message => {
             }
         });
 
-        // 4. PREPARAR DATOS
         if (!usersArray[index].equipo) usersArray[index].equipo = [];
         
         const today = new Date().toISOString().split('T')[0]; 
@@ -414,20 +366,18 @@ client.on('messageCreate', async message => {
             date: today
         };
 
-        // Añadimos las propiedades si existen
         if (iconoGuardar) {
             nuevoShiny.icono = iconoGuardar;
             infoTexto += ` (Tipo: ${iconoGuardar.toUpperCase()})`;
         }
 
         if (esFlee) {
-            nuevoShiny.safari = "flee"; // 👈 ESTO HACE QUE SALGA TACHADO/GRIS EN LA WEB
+            nuevoShiny.safari = "flee";
             infoTexto += ` 💀 **(HUIDO)**`;
         }
 
         usersArray[index].equipo.push(nuevoShiny);
         
-        // 5. GUARDAR Y RESPONDER
         await saveData('users', usersArray);
         message.reply(`✨ **${pokemon}** registrado para **${usersArray[index].nombre}**${infoTexto}. 📅 ${today}`);
     }
@@ -448,17 +398,14 @@ client.on('messageCreate', async message => {
 
         const activeWar = warsList[activeIndex];
         
-        // Inicializar arrays si no existen
         if (!activeWar.teams) activeWar.teams = { A: [], B: [] };
         if (!activeWar.teams.A) activeWar.teams.A = [];
         if (!activeWar.teams.B) activeWar.teams.B = [];
 
-        // Limpiar equipo contrario
         const other = equipo === 'A' ? 'B' : 'A';
         const idx = activeWar.teams[other].indexOf(nombre);
         if (idx !== -1) activeWar.teams[other].splice(idx, 1);
 
-        // Añadir al nuevo
         if (!activeWar.teams[equipo].includes(nombre)) activeWar.teams[equipo].push(nombre);
         
         wars.wars = warsList;
@@ -476,7 +423,6 @@ client.on('messageCreate', async message => {
         
         if (args.length === 0) return message.reply(`❌ Uso: \`!${command} <Nombres...>\``);
 
-        // Cargar datos
         let users = await getData('users') || [];
         let wars = await getData('wars') || {};
         
@@ -487,7 +433,6 @@ client.on('messageCreate', async message => {
         if (activeIndex === -1) return message.reply('❌ No hay War activa.');
         const activeWar = warsList[activeIndex];
 
-        // Inicializar arrays
         if (!activeWar.teams) activeWar.teams = { A: [], B: [] };
         if (!activeWar.teams.A) activeWar.teams.A = [];
         if (!activeWar.teams.B) activeWar.teams.B = [];
@@ -497,10 +442,8 @@ client.on('messageCreate', async message => {
             const profile = usersArray.find(p => p.nombre.toLowerCase() === name.toLowerCase());
             if (profile) {
                 const realName = profile.nombre;
-                // Quitar del otro
                 const idxOther = activeWar.teams[otherTeam].indexOf(realName);
                 if (idxOther !== -1) activeWar.teams[otherTeam].splice(idxOther, 1);
-                // Poner en el nuevo
                 if (!activeWar.teams[targetTeam].includes(realName)) {
                     activeWar.teams[targetTeam].push(realName);
                     added.push(realName);
@@ -527,17 +470,15 @@ fetch('https://discord.com/api/v10/gateway')
   })
   .catch(err => console.error("❌ No se puede ni llegar a la web de Discord:", err.message));
 
-// 1. Comprobamos si el TOKEN existe
 if (!TOKEN) {
     console.error("🔴 ERROR FATAL: La variable 'DISCORD_TOKEN' está vacía o no existe en Render.");
 } else {
-    // 2. Intentamos conectar y capturamos cualquier error
     client.login(TOKEN)
         .then(() => {
             console.log("🔵 Login enviado... Esperando confirmación de Discord.");
         })
         .catch(error => {
             console.error("🔴 ERROR CRÍTICO AL CONECTAR:");
-            console.error(error); // Esto imprimirá el error exacto en la consola
+            console.error(error);
         });
 }

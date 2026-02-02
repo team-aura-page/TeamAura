@@ -1,10 +1,5 @@
-// ==========================================
-// 1. IMPORTAR FIREBASE
-// ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
-
-// --- TU CONFIGURACIÓN ---
 const firebaseConfig = {
     apiKey: "AIzaSyBmRZZTNFgDaDkHCuF-DMtogH9RNSf_QTU",
     authDomain: "page-aura.firebaseapp.com",
@@ -17,40 +12,25 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
-// ==========================================
-// 2. CONEXIÓN EN TIEMPO REAL (CARGA DOBLE)
-// ==========================================
-// Necesitamos datos de 'users' (para avatares) y de 'wars' (para la competición)
 const usersRef = ref(db, 'users');
 const warsRef = ref(db, 'wars');
 
 let globalUsers = [];
 let globalWars = {};
 
-// Escuchamos USERS
 onValue(usersRef, (snap) => {
     const val = snap.val();
     globalUsers = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
-    // Si ya tenemos wars cargado, actualizamos la pantalla
     if (globalWars.activeWarId) initWar(globalUsers, globalWars);
 });
 
-// Escuchamos WARS
 onValue(warsRef, (snap) => {
     const val = snap.val();
     globalWars = val || {};
-    // Si ya tenemos users cargado, actualizamos la pantalla
     if (globalUsers.length > 0) initWar(globalUsers, globalWars);
 });
 
-// ==========================================
-// 3. LÓGICA DE LA GUERRA (INTACTA)
-// ==========================================
 function initWar(mainData, warsData) {
-    // Buscamos la guerra activa
-    // NOTA: En Firebase 'wars' suele ser un objeto, no un array directo si tiene IDs string
-    // Adaptamos para que busque en warsData.wars o directamente en warsData si la estructura cambió
     let warsList = [];
     if (warsData.wars && Array.isArray(warsData.wars)) {
         warsList = warsData.wars;
@@ -68,18 +48,14 @@ function initWar(mainData, warsData) {
     const containerA = document.getElementById('col-team-a');
     const containerB = document.getElementById('col-team-b');
     
-    // Limpieza
     if (containerA) containerA.innerHTML = '';
     if (containerB) containerB.innerHTML = '';
 
-    // === FUNCIÓN PARA PROCESAR CADA EQUIPO ===
     const processTeam = (teamList, teamLetter) => {
         let teamTotalScore = 0;
         
-        // Mapeamos los nombres a objetos completos
         const roster = teamList.map(trainerName => {
             
-            // --- A. GESTIÓN DE AVATARES ---
             const profile = mainData.find(p => p.nombre.toLowerCase() === trainerName.toLowerCase());
             let avatar = '../icons/unown.png'; 
 
@@ -93,8 +69,6 @@ function initWar(mainData, warsData) {
                 }
             }
 
-            // B. Filtrar Capturas Válidas
-            // En Firebase, captures puede ser un Objeto en vez de Array. Lo convertimos.
             let allCaptures = [];
             if (activeWar.captures) {
                 allCaptures = Array.isArray(activeWar.captures) 
@@ -106,12 +80,10 @@ function initWar(mainData, warsData) {
                 if (!c.trainer || !c.team) return false;
                 const isTrainer = c.trainer.toLowerCase() === trainerName.toLowerCase();
                 const isTeam = c.team === teamLetter;
-                // Comprobación de fechas simple (strings YYYY-MM-DD funcionan bien con >=)
                 const isValidDate = c.date >= activeWar.startDate && c.date <= activeWar.endDate;
                 return isTrainer && isTeam && isValidDate;
             });
 
-            // === SUMA DE PUNTOS ===
             const score = validCaptures.reduce((total, capture) => {
                 return total + (capture.points || 0);
             }, 0);
@@ -127,10 +99,8 @@ function initWar(mainData, warsData) {
             };
         });
 
-        // Ordenar MVP
         roster.sort((a, b) => b.score - a.score);
 
-        // Renderizar Tarjetas
         roster.forEach(player => {
             const card = document.createElement('div');
             card.className = 'war-card';
@@ -151,11 +121,9 @@ function initWar(mainData, warsData) {
         return teamTotalScore;
     };
 
-    // Ejecutamos lógica
     const scoreA = processTeam(activeWar.teams.A || [], 'A');
     const scoreB = processTeam(activeWar.teams.B || [], 'B');
 
-    // Actualizamos marcador y barra
     const scoreElA = document.getElementById('score-team-a');
     const scoreElB = document.getElementById('score-team-b');
     
@@ -165,7 +133,6 @@ function initWar(mainData, warsData) {
     updateWarBar(scoreA, scoreB);
 }
 
-// === BARRA DE PROGRESO ===
 function updateWarBar(scoreA, scoreB) {
     const bar = document.getElementById('war-bar');
     if (!bar) return;
@@ -179,9 +146,7 @@ function updateWarBar(scoreA, scoreB) {
     bar.style.width = `${percentA}%`;
 }
 
-// === ANIMACIÓN NÚMEROS ===
 function animateNumber(element, finalValue) {
-    // Si ya tiene el número, no animamos desde 0
     const currentVal = parseInt(element.innerText) || 0;
     if (currentVal === finalValue) return;
 
@@ -203,19 +168,12 @@ function animateNumber(element, finalValue) {
     requestAnimationFrame(update);
 }
 
-// ==========================================
-// 4. MODAL (POPUP) CON COLORES
-// ==========================================
-// Usamos window.openModal para asegurarnos que sea accesible globalmente si hiciera falta,
-// aunque con el onclick generado en JS no es estrictamente necesario.
 window.openModal = function(player) {
-    // BUSCAMOS EL ID CORRECTO (Adaptado a tu arreglo anterior: war-modal)
     const modal = document.getElementById('war-modal');
     if (!modal) return;
 
     const listContainer = document.getElementById('modal-list');
     
-    // Cabecera
     const modalName = document.getElementById('modal-name');
     modalName.innerText = player.nombre;
     
@@ -223,11 +181,9 @@ window.openModal = function(player) {
     modalAvatar.src = player.avatar || '../icons/unown.png';
     modalAvatar.onerror = function() { this.src = '../icons/unown.png'; };
 
-    // Color del equipo
     const teamColor = player.team === 'A' ? '#2ed573' : '#ce5cff';
     modalName.style.color = teamColor;
 
-    // Lista de capturas
     listContainer.innerHTML = '';
 
     if (!player.captures || player.captures.length === 0) {
@@ -274,7 +230,6 @@ window.closeModal = function() {
     }
 };
 
-// Listeners de cierre
 const modalElement = document.getElementById('war-modal');
 if (modalElement) {
     modalElement.addEventListener('click', (e) => {

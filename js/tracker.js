@@ -1,14 +1,7 @@
-// ==========================================
-// 1. IMPORTAR FIREBASE (Database + Auth)
-// ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-// 👇 Importamos las funciones de autenticación
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ==========================================
-// 2. CONFIGURACIÓN
-// ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyBmRZZTNfGDaDkHCuf-DMtogH9RNSf_QTU",
     authDomain: "page-aura.firebaseapp.com",
@@ -21,9 +14,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const auth = getAuth(app); // 👈 Iniciamos el sistema de Auth
+const auth = getAuth(app);
 
-// REFERENCIAS DOM
 const prevBtn = document.getElementById('prevMonthBtn');
 const nextBtn = document.getElementById('nextMonthBtn');
 const monthDisplay = document.getElementById('currentMonthDisplay');
@@ -36,46 +28,32 @@ const statsContainer = document.getElementById('statsContainer');
 const totalCount = document.getElementById('totalCount');
 const adminBtn = document.getElementById('adminSaveBtn');
 
-// Variables globales
 let globalUsersData = {}; 
 let displayedCaptures = [];
 let isAdmin = false;
 
-// Estado de la fecha actual
-let currentTrackerDate = new Date(); // Empieza hoy
-
-// ==========================================
-// 🔐 SISTEMA DE SEGURIDAD REAL (LOGIN MANUAL)
-// ==========================================
+let currentTrackerDate = new Date();
 const urlParams = new URLSearchParams(window.location.search);
 
-// 1. Escuchar si ya estamos logueados (para no pedir pass cada vez que recargues)
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Si Firebase dice que hay usuario, activamos modo Admin
         enableAdminMode();
     }
 });
 
-// 2. Si ponen ?admin=true en la URL y NO están logueados, pedimos CREDENCIALES
 if (urlParams.get('admin') === 'true') {
-    // Esperamos un poco para no chocar con la carga inicial
     setTimeout(() => {
         if (!auth.currentUser) {
             
-            // PASO A: Pedir Correo
             const email = prompt("📧 ZONA ADMIN\nIntroduce tu CORREO de administrador:");
             
             if (email) {
-                // PASO B: Pedir Contraseña (solo si escribió correo)
                 const password = prompt("🔒 ZONA ADMIN\nIntroduce tu CONTRASEÑA:");
                 
                 if (password) {
-                    // PASO C: Intentar Login con lo que ha escrito
                     signInWithEmailAndPassword(auth, email, password)
                         .then(() => {
                             alert("✅ Acceso concedido. Conectado a la base de datos.");
-                            // El onAuthStateChanged de arriba activará la interfaz
                         })
                         .catch((error) => {
                             console.error("Error Auth:", error);
@@ -88,21 +66,15 @@ if (urlParams.get('admin') === 'true') {
 }
 
 function enableAdminMode() {
-    if (isAdmin) return; // Si ya es admin, no hacemos nada
+    if (isAdmin) return;
     isAdmin = true;
     if (adminBtn) adminBtn.style.display = 'block';
     console.log("🔓 MODO ADMIN ACTIVADO (Usuario Autenticado)");
     
-    // Recargamos la interfaz para que aparezcan los bordes de edición, etc.
     updateMonthUI(); 
 }
 
-// ==========================================
-// 📅 LÓGICA DE NAVEGACIÓN DE MESES
-// ==========================================
-
 function updateMonthUI() {
-    // 1. PINTAR EL TÍTULO (Mes y Año)
     const monthName = currentTrackerDate.toLocaleDateString('es-ES', { month: 'long' });
     const monthCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
     const year = currentTrackerDate.getFullYear();
@@ -110,13 +82,6 @@ function updateMonthUI() {
     if (monthDisplay) {
         monthDisplay.innerHTML = `${monthCapitalized} <span style="margin-left: 10px;">${year}</span>`;
     }
-
-    // ====================================================
-    // 🛑 ZONA DE LÍMITES (BLOQUEO DE BOTONES)
-    // ====================================================
-    
-    // --- LÍMITE 1: EL PASADO (Enero 2026) ---
-    // Si estamos en Enero (0) de 2026, bloqueamos ir atrás.
     const isStartLimit = (year === 2026 && currentTrackerDate.getMonth() === 0);
 
     if (prevBtn) {
@@ -166,11 +131,6 @@ if (prevBtn && nextBtn) {
         updateMonthUI();
     });
 }
-
-// ==========================================
-// 3. CARGAR DATOS
-// ==========================================
-
 async function loadData() {
     try {
         console.log("📡 Cargando datos...");
@@ -212,10 +172,6 @@ async function loadData() {
         if (normalGrid) normalGrid.innerHTML = '<p>Error cargando datos.</p>';
     }
 }
-
-// ==========================================
-// 4. PINTAR (MODO GOLD ACTIVADO 🏆)
-// ==========================================
 function renderMonth(selectedMonth) {
     const filtered = displayedCaptures.filter(c => c.date && c.date.startsWith(selectedMonth));
     filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -241,13 +197,11 @@ function renderMonth(selectedMonth) {
         return; 
     }
 
-    // LEADERBOARD
     if (leaderboardDiv) {
-        // 1. CONFIGURA AQUÍ TUS IMÁGENES
         const MEDAL_IMAGES = [
-            "../icons/primer-puesto.png",   // Imagen para el 1º
-            "../icons/segundo-puesto.png", // Imagen para el 2º
-            "../icons/tercer-puesto.png"  // Imagen para el 3º
+            "../icons/primer-puesto.png",
+            "../icons/segundo-puesto.png",
+            "../icons/tercer-puesto.png"
         ];
 
         const counts = {};
@@ -267,7 +221,6 @@ function renderMonth(selectedMonth) {
             let medalContent = '';
             let rankClass = '';
 
-            // Asignamos clase y la imagen correspondiente según el índice (0, 1, 2)
             if (index === 0) { 
                 rankClass = 'rank-1'; 
                 medalContent = `<img src="${MEDAL_IMAGES[0]}" class="custom-medal" alt="1º">`;
@@ -281,7 +234,6 @@ function renderMonth(selectedMonth) {
                 medalContent = `<img src="${MEDAL_IMAGES[2]}" class="custom-medal" alt="3º">`;
             }
 
-            // Construimos el HTML
             rankHTML += `
                 <div class="leaderboard-item ${rankClass}">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -295,7 +247,6 @@ function renderMonth(selectedMonth) {
         leaderboardDiv.innerHTML = rankHTML;
     }
 
-    // CARTAS
     let hasRares = false;
 
     filtered.forEach(capture => {
@@ -303,25 +254,19 @@ function renderMonth(selectedMonth) {
         if (isRare) hasRares = true;
 
         const card = createCard(capture);
-        
-        // --- 1. ESTÉTICA (PARA TODOS) ---
-        // Aquí aplicamos el borde dorado y la clase CSS para que TODOS lo vean
+
         if (isRare) {
-            card.classList.add('is-rare'); // Activa el brillo del CSS
-            card.style.border = "2px solid #ffd700"; // Borde dorado
+            card.classList.add('is-rare');
+            card.style.border = "2px solid #ffd700";
         } else {
             card.style.border = "1px solid #333";
         }
-        
-        // --- 2. FUNCIONALIDAD (SOLO ADMIN) ---
-        // Solo el admin puede hacer clic para editar
         if (isAdmin) {
             card.style.cursor = "pointer";
             card.title = "ADMIN: Clic para cambiar rareza";
             card.onclick = () => toggleRarity(capture, selectedMonth); 
         }
 
-        // --- 3. COLOCACIÓN ---
         if (isRare) {
             if (rareGrid) rareGrid.appendChild(card);
         } else {
@@ -359,11 +304,6 @@ function createCard(capture) {
     `;
     return card;
 }
-
-// ==========================================
-// 5. FUNCIONES DE GUARDADO (ADMIN)
-// ==========================================
-
 function toggleRarity(capture, selectedMonth) {
     if (capture.rarity === 'rare') {
         delete capture.rarity;
@@ -410,6 +350,4 @@ if (adminBtn) {
         }
     });
 }
-
-// Arrancar
 loadData();

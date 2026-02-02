@@ -1,10 +1,6 @@
-// ==========================================
-// 1. IMPORTAR FIREBASE & CONSTANTES
-// ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
-// --- TU CONFIGURACIÓN DE FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyBmRZZTNFgDaDkHCuF-DMtogH9RNSf_QTU",
     authDomain: "page-aura.firebaseapp.com",
@@ -15,11 +11,9 @@ const firebaseConfig = {
     appId: "1:466722575466:web:29583cefae1320c2cc6613"
 };
 
-// INICIAR FIREBASE
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// CONSTANTES VISUALES
 const URL_SHINY = "https://play.pokemonshowdown.com/sprites/gen5ani-shiny/";
 const main = document.getElementById("shinydex-main");
 const index = document.getElementById("shinydex-index");
@@ -38,29 +32,21 @@ let globalCaptured = 0;
 let generationBlocks = [];
 let tooltipElement = null;
 
-// ==========================================
-// 2. CONEXIÓN EN TIEMPO REAL (REEMPLAZA AL FETCH)
-// ==========================================
 const usersRef = ref(db, 'users');
 
 onValue(usersRef, (snapshot) => {
     const data = snapshot.val();
     
-    // Si no hay datos, salimos
     if (!data) return;
 
-    // Convertimos a array si es necesario
     const playersData = Array.isArray(data) ? data : Object.values(data);
     
-    // PROCESAMIENTO DE DATOS (Igual que antes, pero dentro del listener)
     const dexData = new Map();
 
     playersData.forEach(jugador => {
-        // Aseguramos que tenga equipo
         const equipo = jugador.equipo || [];
         
         equipo.forEach(poke => {
-            // Ignorar flees
             if (poke.safari === 'flee') return;
 
             const name = (poke.pokemon || 'unknown').toLowerCase().trim();
@@ -71,12 +57,10 @@ onValue(usersRef, (snapshot) => {
 
             const entry = dexData.get(name);
 
-            // 1. Añadir dueño si no está
             if (!entry.owners.includes(jugador.nombre)) {
                 entry.owners.push(jugador.nombre);
             }
 
-            // 2. Lógica de estado (Verde gana a Amarillo)
             if (poke.live === 'no') {
                 if (entry.status !== 'normal') entry.status = 'non-live';
             } else {
@@ -85,15 +69,9 @@ onValue(usersRef, (snapshot) => {
         });
     });
 
-    // ¡PINTAMOS LA DEX CON LOS DATOS FRESCOS!
-    createGlobalTooltip(); // Aseguramos que el tooltip exista
+    createGlobalTooltip();
     initShinyDex(dexData);
 });
-
-// ==========================================
-// 3. FUNCIONES DE UTILIDAD (TU LÓGICA VISUAL)
-// ==========================================
-
 function formatName(name) {
     const fixes = { 
         nidoranf: "Nidoran♀", nidoranm: "Nidoran♂", 
@@ -133,7 +111,6 @@ function animateValue(element, start, end, duration, isGlobal = false, currentOb
     window.requestAnimationFrame(step);
 }
 
-// === TOOLTIP GLOBAL ===
 function createGlobalTooltip() {
     if (document.getElementById('global-tooltip')) return;
     tooltipElement = document.createElement('div');
@@ -173,10 +150,6 @@ function moveTooltip(e) {
 function hideTooltip() {
     if (tooltipElement) tooltipElement.classList.remove('visible');
 }
-
-// ==========================================
-// 4. RENDERIZADO (INIT)
-// ==========================================
 
 function initShinyDex(dexData) {
     globalCaptured = 0;
@@ -257,11 +230,6 @@ function initShinyDex(dexData) {
 
     initScrollSpy();
 }
-
-// ==========================================
-// 5. ANIMACIONES EXTRA Y LISTENERS
-// ==========================================
-
 function initCardsReveal() {
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {

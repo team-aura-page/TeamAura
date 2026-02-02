@@ -2,9 +2,9 @@
    1. VARIABLES Y CONFIGURACIÓN GENERAL
    ========================================= */
 :root {
-    --gold: #ffcc00;           /* Color principal */
-    --bg-dark: #121212;        /* Fondo web */
-    --bg-panel: #2a2a2a;       /* Fondo paneles/modal */
+    --gold: #ffcc00;
+    --bg-dark: #121212;
+    --bg-panel: #2a2a2a;
     --text-white: #e0e0e0;
 }
 html {
@@ -95,30 +95,22 @@ h1, h2, h3, h4 {
     white-space: nowrap; 
 }
 
-/* === ESTADO ACTIVO (Página Actual) === */
 
 .nav-item.active {
-    pointer-events: none; /* Desactiva clicks y hovers automáticamente */
+    pointer-events: none;
     cursor: default;
 }
 
 .nav-item.active span {
 
     color: #c49b00;
-    /* La línea dorada */
     border-bottom: 3px solid #c49b00;;
     
-    /* TRUCOS PARA PEGARLO AL TEXTO: */
-    display: inline-block; /* Hace que la caja se ajuste perfectamente al texto */
-    line-height: 1;        /* Reduce la altura de línea para quitar espacio extra */
-    padding-bottom: 1px;   /* Un espacio minúsculo para no cortar la 'g', 'y', 'j' */
+    display: inline-block;
+    line-height: 1;
+    padding-bottom: 1px;
 }
 
-/* Nota: He borrado todos los bloques de ".nav-item.active:hover" 
-   porque pointer-events: none ya se encarga de que no se muevan. */
-
-
-/* === ELEMENTO ESPECIAL "TEAM AURA" (Izquierda) === */
 .nav-start {
     position: absolute; 
     left: 40px;         
@@ -129,7 +121,6 @@ h1, h2, h3, h4 {
 .nav-start img { width: 45px; height: 45px; }
 
 
-/* === HOVERS NORMALES (Solo aplican a los NO activos) === */
 
 /* Hover para el logo */
 .nav-start:not(.active):hover {
@@ -173,11 +164,11 @@ h1, h2, h3, h4 {
 .page-showcase .content-container { max-width: 3000px; }
 
 .about-section p {
-    font-size: 1.5rem; /* Aumenta este número si lo quieres más grande */
-    line-height: 1.8;  /* Separación entre líneas para leer mejor */
+    font-size: 1.5rem;
+    line-height: 1.8;
     margin-bottom: 15px;
     color: var(--text-white);
-    max-width: 90%;    /* Evita líneas demasiado largas */
+    max-width: 90%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -210,7 +201,7 @@ h1, h2, h3, h4 {
     color: var(--text-white);
     padding: 10px 15px;
     border-radius: 8px;
-    font-family: 'PokemonFireRed', monospace; /* Tu fuente */
+    font-family: 'PokemonFireRed', monospace;
     font-size: 1.2rem;
     outline: none;
     transition: all 0.3s ease;
@@ -225,17 +216,14 @@ h1, h2, h3, h4 {
     transform: translateY(-2px);
 }
 
-/* El input un poco más ancho */
 .filters-container input {
     width: 250px;
 }
 
-/* El select con cursor de mano */
 .filters-container select {
     cursor: pointer;
 }
 
-/* Ajuste móvil */
 @media (max-width: 600px) {
     .filters-container {
         flex-direction: column;
@@ -259,7 +247,6 @@ h1, h2, h3, h4 {
     padding: 20px;
 }
 
-/* Configuración de columnas según página */
 .page-index .staff-grid {
     max-width: 600px;
     grid-template-columns: repeat(2, 1fr);
@@ -331,24 +318,21 @@ h1, h2, h3, h4 {
 
 /* === COLORES DEL TOP 3 (Ranking) === */
 
-/* TOP 1: Oro Brillante */
 .shiny-counter.rank-gold {
-    color: #ffcc00; /* Tu variable --gold */
-    text-shadow: 0 0 10px rgba(255, 204, 0, 0.6); /* Un resplandor fuerte */
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
     font-weight: bold;
-    font-size: 1.3rem; /* Un pelín más grande */
+    font-size: 1.3rem;
 }
 
-/* TOP 2: Plata Metálica */
 .shiny-counter.rank-silver {
-    color: #e0e0e0; /* Un gris muy claro casi blanco */
+    color: #e0e0e0;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
     font-weight: bold;
 }
 
-/* TOP 3: Bronce / Cobre */
 .shiny-counter.rank-bronze {
-    color: #cd7f32; /* Color cobre clásico */
+    color: #cd7f32;
     text-shadow: 0 0 5px rgba(205, 127, 50, 0.4);
     font-weight: bold;
 }
@@ -362,11 +346,8 @@ h1, h2, h3, h4 {
     to { background-position: -200% center; }
 }
 
-/* AQUÍ ESTÁ EL ARREGLO:
-   En vez de 'composes', aplicamos las reglas a ambos títulos a la vez */
 .staff-title,
 .modal-title-large {
-    /* Degradado dorado con doble brillo */
     background: linear-gradient(
         to right, 
         var(--gold) 0%,   var(--gold) 20%,  
@@ -381,13 +362,11 @@ h1, h2, h3, h4 {
     background-clip: text;
     -webkit-background-clip: text; 
     
-    /* Animación compartida */
     animation: shineSweep 12s linear infinite;
     
     text-transform: uppercase;
 }
 
-/* Estilos específicos de cada uno (tamaño, margen) */
 .staff-title {
     font-size: 3rem;
     margin-bottom: 40px;
@@ -420,21 +399,18 @@ h1, h2, h3, h4 {
     /* ESTADO INICIAL (Cerrado/Invisible) */
     opacity: 0;
     visibility: hidden;
-    backdrop-filter: blur(4px); /* Opcional: difumina el fondo detrás */
+    backdrop-filter: blur(4px);
     
     /* Transición suave para el fondo negro */
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* ESTADO ACTIVO (Abierto/Visible) 
-   Esta clase se añade con JS 10ms después de quitar 'hidden' */
 .modal-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
 .modal-content {
-    /* Tus estilos visuales originales */
     background-color: var(--bg-panel); 
     padding: 30px;
     border-radius: 20px;
@@ -445,23 +421,18 @@ h1, h2, h3, h4 {
     box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
     text-align: center;
 
-    /* ANIMACIÓN DE ZOOM (Estado Inicial) */
-    /* Empieza pequeño (0.8) y un pelín más abajo */
     transform: scale(0.8) translateY(30px);
     opacity: 0;
 
-    /* La magia del rebote (cubic-bezier) */
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
                 opacity 0.3s ease;
 }
 
-/* Cuando el overlay está activo, el contenido hace Zoom In */
 .modal-overlay.active .modal-content {
     transform: scale(1) translateY(0);
     opacity: 1;
 }
 
-/* --- RESTO DE TUS ESTILOS (Sin cambios) --- */
 .close-btn {
     position: absolute;
     top: 20px; right: 25px;
@@ -470,12 +441,11 @@ h1, h2, h3, h4 {
     cursor: pointer;
     line-height: 1;
     z-index: 10;
-    transition: color 0.2s; /* Pequeña mejora: transición de color */
+    transition: color 0.2s;
 }
 
 .close-btn:hover { color: #ffffff; }
 
-/* La clase hidden sigue siendo necesaria para display: none */
 .hidden { display: none !important; }
 
 .no-scroll { overflow: hidden; height: 100vh; }
@@ -554,7 +524,7 @@ h1, h2, h3, h4 {
     background-color: #1a1a1a;
     border: 2px solid var(--gold);
     border-radius: 10px;
-    padding: 15px 10px 15px 35px; /* Padding izq para centrar visualmente */
+    padding: 15px 10px 15px 35px;
     flex-shrink: 0;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
     margin-right: 40px; 
@@ -603,7 +573,6 @@ h1, h2, h3, h4 {
 /* --- SPRITE BASE --- */
 .poke-base-sprite { 
     display: block; 
-    /* Transición suave para el efecto de crecimiento */
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -613,53 +582,44 @@ h1, h2, h3, h4 {
     opacity: 0.6;
 }
 
-/* --- GIF DE BRILLITOS (SPARKLE) --- */
 .poke-sparkle-effect {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(180deg); /* Centrado perfecto */
+    transform: translate(-50%, -50%) rotate(180deg);
     
-    width: 140%; /* Un poco más grande que el sprite para rodearlo */
+    width: 140%;
     height: 140%;
     object-fit: contain;
     
-    opacity: 0; /* Oculto por defecto */
-    pointer-events: none; /* Ignora el ratón */
-    z-index: 15; /* Encima del pokemon, debajo del icono leyenda */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 15;
     transition: opacity 0.3s ease;
 
     filter: sepia(100%) saturate(600%) hue-rotate(15deg) brightness(120%);
 }
 
-/* --- ICONO DE LEYENDA (Esquina sup. derecha) --- */
 .poke-legend-icon {
     position: absolute; 
     top: 0px; right: 0px; 
     width: 28px; height: 28px;
     object-fit: contain;
-    z-index: 10; /* Siempre encima de todo */
+    z-index: 10;
     filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.8)); 
 }
 
-/* =========================================
-   INTERACCIONES (HOVER)
-   ========================================= */
-
-/* 1. CRECIMIENTO: Al pasar el ratón, el sprite crece (si no ha huído) */
 .poke-overlay-container:hover .poke-base-sprite:not(.poke-fled) {
     transform: scale(1.2); 
-    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6)); /* Resplandor blanco */
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
     position: relative;
-    z-index: 8; /* Sube de nivel para no quedar tapado por los vecinos */
+    z-index: 8;
 }
 
-/* 2. BRILLO: Al pasar el ratón, mostramos el gif */
 .poke-overlay-container:hover .poke-sparkle-effect {
     opacity: 1;
 }
 
-/* 3. EXCEPCIÓN: Si huyó, anulamos el brillo aunque hagamos hover */
 .poke-overlay-container:hover .poke-base-sprite.poke-fled ~ .poke-sparkle-effect {
     display: none;
     opacity: 0;
@@ -669,7 +629,6 @@ h1, h2, h3, h4 {
    9. RESPONSIVE GLOBAL
    ========================================= */
 @media (max-width: 800px) {
-    /* Modal Header a columna */
     .modal-header-redesigned {
         flex-direction: column;
         gap: 10px;
@@ -678,11 +637,9 @@ h1, h2, h3, h4 {
     .modal-avatar-wrapper { flex: 0 0 120px; height: 120px; }
     .modal-title-large { font-size: 2rem; }
     
-    /* Modal Body a columna */
     .modal-body-wrapper { flex-direction: column; }
     .pokemon-team-grid { width: 100%; margin-bottom: 20px; }
     
-    /* Leyenda */
     .legend-sidebar {
         width: 100%;
         margin-right: 0;
@@ -695,13 +652,6 @@ h1, h2, h3, h4 {
         grid-column: span 2;
         margin-left: 0; width: 100%;
     }
-}
-/*VITAL MOVIES*/
-
-/* --- LAYOUT GENERAL --- */
-/* --- ESTRUCTURA GENERAL --- */
-html {
-    scroll-behavior: smooth;
 }
 
 .shinydex-content {
@@ -719,7 +669,6 @@ html {
     position: relative;
 }
 
-/* --- CABECERA Y BUSCADOR --- */
 .search-wrapper {
     text-align: center;
     margin-top: 35px;
@@ -755,7 +704,6 @@ html {
     transition: color 0.5s ease;
 }
 
-/* --- BLOQUES DE GENERACIÓN --- */
 .gen-block {
     margin-bottom: 60px;
     scroll-margin-top: 110px; 
@@ -873,14 +821,12 @@ html {
     cursor: pointer;
 }
 
-/* Solo mostramos tooltip en cartas verdes (.captured) */
 .shiny-card.captured:hover .trainer-tooltip {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);
 }
 
-/* --- ÍNDICE LATERAL (CON ZOOM) --- */
 .shinydex-index {
     position: sticky;
     top: 120px;
@@ -902,7 +848,6 @@ html {
     place-items: center;
     font-weight: bold;
     background: #000;
-    /* Transición elástica para el zoom */
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
                 background 0.3s ease, 
                 color 0.3s ease, 
@@ -920,9 +865,8 @@ html {
     pointer-events: auto;
 }
 
-/* EFECTO ZOOM AL PASAR EL RATÓN */
 .shinydex-index a.reveal:hover {
-    transform: scale(1) translateX(-5px); /* Zoom + desplazamiento lateral */
+    transform: scale(1) translateX(-5px);
     background: #ffcc00;
     color: #000;
     box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
@@ -958,15 +902,12 @@ html {
 .poke-number { position: absolute; top: 5px; font-size: 0.90rem; font-weight: bold; color: #ffffff; }
 .poke-name { color: #ffffff; font-size: 0.85rem; font-weight: bold; text-align: center; margin-top: auto; width: 100%; }
 
-/* === TOOLTIP GLOBAL FLOTANTE (OPTIMIZADO CON SCROLL) === */
 #global-tooltip {
     position: fixed;
     top: 0; 
     left: 0;
-    /* Transición suave solo para aparecer/desaparecer */
     transition: opacity 0.15s ease, visibility 0.15s ease;
     
-    /* OPTIMIZACIÓN GPU: */
     will-change: transform; 
     
     background-color: rgba(15, 15, 15, 0.95);
@@ -978,52 +919,44 @@ html {
     opacity: 0;
     visibility: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    min-width: 180px; /* Un poco más ancho para nombres largos */
+    min-width: 180px;
     text-align: center;
     backdrop-filter: blur(5px);
 }
 
-/* Clase para mostrarlo */
 #global-tooltip.visible {
     opacity: 1;
     visibility: visible;
 }
 
-/* Título "CAPTURADO POR" */
 #global-tooltip .tooltip-title {
     display: block;
     color: #ffd700;
-    font-family: 'Segoe UI', sans-serif; /* Aseguramos fuente bonita */
+    font-family: 'Segoe UI', sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.9rem; /* Un pelín más pequeño para jerarquía */
+    font-size: 0.9rem;
     margin-bottom: 8px;
     border-bottom: 1px solid #444;
     padding-bottom: 5px;
     letter-spacing: 1.5px;
 }
 
-/* === MÁSCARA DE SCROLL (NUEVO) === */
-/* Esta es la "ventana" que solo deja ver 5 nombres */
 #global-tooltip .tooltip-scroll-mask {
-    /* Calculado para aprox 5 nombres con font-size 1.2rem */
     max-height: 125px; 
     overflow: hidden;  
     position: relative;
-    /* Degradado al final para indicar que sigue */
     mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
 }
 
-/* Lista de nombres */
 #global-tooltip .tooltip-names {
     list-style: none;
     padding: 0;
     margin: 0;
     color: #fff;
-    font-size: 1.1rem; /* Ajustado ligeramente */
+    font-size: 1.1rem;
     font-weight: 500;
-    /* Preparamos para animación */
     will-change: transform;
 }
 
@@ -1031,20 +964,15 @@ html {
     padding: 2px 0;
 }
 
-/* === ANIMACIÓN DE SCROLL === */
-/* Esta clase se añade con JS si hay más de 5 nombres */
 #global-tooltip .tooltip-names.scrolling {
     animation: vertical-scroll 12s ease-in-out infinite alternate; 
 }
 
 @keyframes vertical-scroll {
-    /* 0% a 5%: Pausa inicial MUY BREVE (solo para que el ojo enfoque) */
     0%, 5% { 
         transform: translateY(0); 
     }
-    
-    /* 95% a 100%: Llega al final y hace una pausa breve antes de subir */
-    /* El trayecto de bajada ocurre entre el 5% y el 95% (mucha parte del tiempo) */
+
     95%, 100% { 
         transform: translateY(calc(-100% + 125px)); 
     }
@@ -1054,25 +982,22 @@ html {
    ESTILOS SHINY WAR (Archeops vs Aerodactyl)
    ========================================= */
 
-/* 1. El contenedor principal de la página */
 .page-shinywar {
     background-color: #121212;
     position: relative;
-    min-height: 100vh; /* Asegura que ocupe al menos toda la altura de la pantalla */
-    overflow-x: hidden; /* Mantenemos esto para evitar scroll lateral por los sprites */
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* 2. La capa "falsa" del fondo (Pseudo-elemento ::before) */
 .page-shinywar::before {
-    content: ""; /* Necesario para que el pseudo-elemento exista */
-    position: fixed; /* Se queda fijo en la pantalla aunque hagas scroll */
-    top: 0; left: 0; right: 0; bottom: 0; /* Ocupa toda la pantalla */
-    z-index: -1; /* Se coloca DETRÁS del contenido de la web */
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
     
-    /* --- Configuración de la imagen --- */
     background-image: url(../icons/fondowar.png);
-    background-size: cover; /* Estira la imagen para cubrir todo sin deformarla */
-    background-position: center center; /* Centra la imagen */
+    background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
     filter: blur(10px); 
 
@@ -1108,15 +1033,11 @@ html {
     font-weight: 800;
 }
 
-/* Colores de Equipos (INVERTIDOS) */
-
-/* EQUIPO A (Archeops) - VERDE */
 .team-a h1 { 
     color: #2ed573; 
     text-shadow: 0 0 20px rgba(46, 213, 115, 0.6); 
 }
 
-/* EQUIPO B (Aerodactyl) - MORADO */
 .team-b h1 { 
     color: #ce5cff; 
     text-shadow: 0 0 20px rgba(206, 92, 255, 0.6); 
@@ -1130,9 +1051,7 @@ html {
     font-variant-numeric: tabular-nums;
 }
 
-/* --- LOGO VS CENTRAL --- */
 .vs-badge {
-    /* Quitamos tamaño fijo y fondo */
     background: transparent;
     width: auto;
     height: auto;
@@ -1140,43 +1059,35 @@ html {
     border-radius: 0;
     box-shadow: none;
 
-    /* Estilo del texto "VS" */
-    font-size: 4.5rem; /* Un poco más grande ahora que no tiene círculo */
+    font-size: 4.5rem;
     font-weight: 900;
-    font-style: italic; /* Le da más dinamismo */
+    font-style: italic;
     
-    /* Color Dorado Brillante (para que se vea en lo oscuro) */
     color: #ffd700; 
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); /* Resplandor en las letras */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
     
-    /* Posicionamiento */
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin: 0 10px; /* Un poco de aire a los lados */
+    margin: 0 10px;
 }
 
-/* --- BARRA DE PROGRESO (TUG OF WAR) --- */
-
-/* Wrapper principal: Permite que los sprites se posicionen fuera */
 .war-bar-wrapper {
     position: relative;
-    height: 40px;      /* Altura de la barra visual */
-    margin-bottom: 4rem; /* Margen extra abajo para que las patas no choquen con las cartas */
+    height: 40px;
+    margin-bottom: 4rem;
     margin-top: 1rem;
     width: 100%;
 }
 
-/* Contenedor INTERNO: Este sí recorta la barra verde */
 .war-progress-container {
     width: 100%;
     height: 100%;
-    /* Fondo = Equipo B (Morado) gana terreno si la barra verde se encoge */
     background: #9c27b0; 
     border-radius: 20px;
-    overflow: hidden; /* IMPORTANTE: Recorta la barra, pero NO los sprites */
+    overflow: hidden;
     position: relative;
     box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
     border: 2px solid #333;
@@ -1184,7 +1095,6 @@ html {
 
 .war-progress-bar {
     height: 100%;
-    /* Barra = Equipo A (Verde) gana terreno */
     background: #2ed573; 
     width: 50%;
     transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1193,7 +1103,6 @@ html {
     z-index: 1;
 }
 
-/* Línea divisoria brillante */
 .war-progress-bar::after {
     content: '';
     position: absolute;
@@ -1206,18 +1115,16 @@ html {
     z-index: 2;
 }
 
-/* ESTILOS DE LOS SPRITES FLOTANTES */
 .war-sprite {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%); /* Centrado vertical exacto */
-    height: 90px; /* Tamaño GRANDE para que sobresalgan */
-    z-index: 10; /* Por encima de todo */
-    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.6)); /* Sombra para dar profundidad */
-    pointer-events: none; /* Para que no molesten al clickear */
+    transform: translateY(-50%);
+    height: 90px;
+    z-index: 10;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.6));
+    pointer-events: none;
 }
 
-/* Posiciones específicas para sacarlos un poco por los lados */
 .sprite-left {
     left: -15px; 
 }
@@ -1239,7 +1146,6 @@ html {
     gap: 15px;
 }
 
-/* Tarjeta Individual (Base) */
 .war-card {
     background: #1e1e1e;
     border-radius: 12px;
@@ -1247,9 +1153,8 @@ html {
     display: flex;
     align-items: center;
     gap: 15px;
-    cursor: pointer; /* Mano al pasar por encima */
+    cursor: pointer;
     
-    /* Configuración base (Heredada por defecto) */
     border-left: 6px solid #555;
     transition: transform 0.2s, background 0.2s;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -1261,27 +1166,24 @@ html {
 
 /* === ESTILOS ESPECÍFICOS POR EQUIPO === */
 
-/* EQUIPO A (Archeops): Estándar (Foto Izq | Borde Izq | Texto Izq) */
 .team-column#col-team-a .war-card {
-    border-left-color: #2ed573; /* Verde */
+    border-left-color: #2ed573;
 }
 
 .team-column#col-team-a .war-card:hover {
     transform: translateX(5px);
 }
 
-/* EQUIPO B (Aerodactyl): INVERTIDO (Texto Der | Borde Der | Foto Der) */
 .team-column#col-team-b .war-card {
-    flex-direction: row-reverse;     /* Invierte orden: Info - Foto */
-    border-left: none;               /* Quitar borde izq */
-    border-right: 6px solid #ce5cff; /* Poner borde der Morado */
+    flex-direction: row-reverse;
+    border-left: none;
+    border-right: 6px solid #ce5cff;
 }
 
 .team-column#col-team-b .war-card:hover {
-    transform: translateX(-5px);     /* Mover a la izquierda al hover */
+    transform: translateX(-5px);
 }
 
-/* --- INFORMACIÓN DENTRO DE LA TARJETA --- */
 .war-avatar {
     width: 72px;   
     height: 72px;
@@ -1293,7 +1195,6 @@ html {
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* CENTRADO DEL TEXTO (Para ambos equipos) */
     justify-content: center;
     text-align: center;
 }
@@ -1315,7 +1216,6 @@ html {
     font-size: 1.3rem;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .war-grids-container { flex-direction: column; }
     .war-scoreboard { gap: 10px; }
@@ -1324,7 +1224,6 @@ html {
     .vs-badge { width: 50px; height: 50px; font-size: 1.2rem; border-width: 2px; }
     .war-content { padding: 1rem; }
     
-    /* Ajuste de sprites en móvil para que no se salgan de la pantalla */
     .war-sprite { height: 60px; }
     .sprite-left { left: -5px; }
     .sprite-right { right: -5px; }
@@ -1338,8 +1237,8 @@ html {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85); /* Fondo oscuro transparente */
-    z-index: 2000; /* Por encima de todo */
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1404,36 +1303,32 @@ html {
     font-size: 1.5rem;
 }
 
-/* === MODIFICACIÓN: Scrollbar Personalizado en el Body === */
 .modal-body {
     padding: 20px;
-    max-height: 60vh; /* Scroll si hay muchas capturas */
+    max-height: 60vh;
     overflow-y: auto;
     
-    /* Estilos para Firefox */
     scrollbar-width: thin;
     scrollbar-color: #555 #1e1e1e;
 }
 
-/* Estilos para Chrome, Edge, Safari */
 .modal-body::-webkit-scrollbar {
-    width: 8px; /* Barra fina */
+    width: 8px;
 }
 
 .modal-body::-webkit-scrollbar-track {
-    background: #1e1e1e; /* Color del fondo para que sea invisible */
+    background: #1e1e1e;
 }
 
 .modal-body::-webkit-scrollbar-thumb {
-    background-color: #444; /* Color de la barra */
-    border-radius: 10px;    /* Muy redondeada */
-    border: 2px solid #1e1e1e; /* Borde interno para efecto "flotante" */
+    background-color: #444;
+    border-radius: 10px;
+    border: 2px solid #1e1e1e;
 }
 
 .modal-body::-webkit-scrollbar-thumb:hover {
-    background-color: #666; /* Un poco más claro al pasar el mouse */
+    background-color: #666;
 }
-/* ======================================================== */
 
 .modal-body h3 {
     text-align: center;
@@ -1445,7 +1340,6 @@ html {
     letter-spacing: 1px;
 }
 
-/* Lista de Capturas */
 .capture-row {
     display: flex;
     align-items: center;
@@ -1487,19 +1381,17 @@ html {
 
 .hidden { display: none; }
 
-/* === NAVBAR TRANSPARENTE (Solo en ShinyWar) === */
 .page-shinywar .main-nav {
-    background-color: transparent; /* Quita el color de fondo */
-    box-shadow: none; /* Opcional: Quita la sombra si la tiene */
-    background-color: rgba(0, 0, 0, 0.4); /* Negro al 40% de opacidad */
-    backdrop-filter: blur(5px); /* Un extra de desenfoque solo en la barra */
+    background-color: transparent;
+    box-shadow: none;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
     position: relative;
     top: 0;
     width: 100%;
-    z-index: 100; /* Para asegurar que quede por encima del fondo/contenido */
+    z-index: 100;
 }
 
-/* Opcional: Si tienes una línea divisoria (<hr>) debajo del nav, ocúltala también */
 .page-shinywar .divider {
     display: none;
 }
@@ -1508,14 +1400,12 @@ html {
    ESTILOS ESPECÍFICOS DEL TRACKER (Blindados 🛡️)
    ========================================= */
 
-/* Contenedor principal */
 .tracker-content-container {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Cabecera y controles */
 .tracker-header-controls {
     text-align: center;
     padding: 2rem;
@@ -1535,8 +1425,6 @@ html {
     color: #bbb;
 }
 
-
-/* Grid contenedor */
 .tracker-grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1557,11 +1445,10 @@ html {
     position: relative;
     overflow: hidden;
 
-    /* --- CAMBIO 1: Para que todas las cartas de la fila midan lo mismo --- */
     height: 100%; 
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Esto empuja la fecha al final si sobra espacio */
+    justify-content: space-between;
 }
 
 .tracker-poke-card:hover {
@@ -1607,7 +1494,6 @@ html {
     border: 1px solid #444;
 }
 
-/* Estadísticas */
 .tracker-stats-wrapper {
     display: flex;
     justify-content: center;
@@ -1625,7 +1511,6 @@ font-size: 2rem;
    ESTILOS DEL MODO ADMIN Y ZONA RARE
    ========================================= */
 
-/* El botón de Guardar (Admin) */
 #adminSaveBtn {
     background: #e91e63;
     color: white;
@@ -1640,7 +1525,7 @@ font-size: 2rem;
     transition: all 0.2s;
     text-transform: uppercase;
     letter-spacing: 1px;
-    display: block; /* Centrado */
+    display: block;
 }
 
 #adminSaveBtn:hover {
@@ -1654,50 +1539,37 @@ font-size: 2rem;
     box-shadow: none;
 }
 
-/* La Zona Rare (El recuadro especial) */
 #rareZone {
-    /* --- Estructura y Posición (Igual que antes) --- */
     margin-bottom: 40px;
     margin-top: 40px;
     padding: 25px;
     border-radius: 20px;
-    background: rgba(255, 215, 0, 0.05); /* Fondo dorado suave */
+    background: rgba(255, 215, 0, 0.05);
     position: relative;
     
-    /* --- Estilos Base del Borde y Sombra --- */
     border: 2px dashed #ffd700; 
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); 
     
-    /* --- LA ANIMACIÓN --- */
-    /* 2 segundos, infinita, movimiento suave de ida y vuelta */
     animation: glowPulse 4s infinite ease-in-out;
 }
 
-/* 🌟 Definición del Latido Dorado */
 @keyframes glowPulse {
     0% {
-        /* Estado normal */
         box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         border-color: #ffd700;
         transform: scale(1);
     }
     50% {
-        /* Estado "Brillante" (Punto máximo) */
-        /* Sombra externa más grande + sombra interna sutil */
         box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.1);
-        
-        /* El borde se aclara casi a blanco para parecer que brilla */
         border-color: #fff8c0; 
     }
     100% {
-        /* Vuelta al estado normal */
         box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         border-color: #ffd700;
         transform: scale(1);
     }
 }
 
-/* Título de la zona Rare */
 #rareZone h2 {
     color: #ffd700; 
     text-align: center;
@@ -1715,19 +1587,16 @@ font-size: 2rem;
     gap: 30px;
 }
 
-/* ✨ ESTILOS PARA LAS CARTAS RARAS (Para todos los usuarios) */
 .tracker-poke-card.is-rare {
-    border: 2px solid #ffd700 !important; /* Borde dorado forzado */
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* Brillo dorado */
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
 }
 
-/* Efecto extra al pasar el ratón por una rare */
 .tracker-poke-card.is-rare:hover {
     box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
     transform: translateY(-5px) scale(1.03);
 }
 
-/* Título de la zona Normal */
 #normalTitle {
     color: #777;
     text-align: center;
@@ -1770,7 +1639,6 @@ font-size: 2rem;
     transform: scale(1.05);
 }
 
-/* Colores de las medallas */
 .rank-1 {
     border-color: #ffd700;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
@@ -1788,7 +1656,7 @@ font-size: 2rem;
 .rank-3 {
     border-color: #cd7f32;
     box-shadow: 0 0 10px rgba(205, 127, 50, 0.2);
-    color: #ffb74d; /* Un naranja más claro para que se lea bien */
+    color: #ffb74d;
     background: rgba(205, 127, 50, 0.1);
 }
 
@@ -1818,26 +1686,26 @@ font-size: 2rem;
     background: rgba(0, 0, 0, 0.2);
     padding: 10px 20px;
     border-radius: 50px;
-    display: inline-flex; /* Para que se ajuste al contenido */
+    display: inline-flex;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .nav-arrow-btn {
-    background: transparent; /* Fondo transparente */
-    border: none;            /* Sin borde */
-    border-radius: 0;        /* Quitamos el círculo */
-    color: #888;             /* Color gris claro en reposo (más sutil) */
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: #888;
     
-    width: auto;             /* Ya no necesitamos un ancho fijo */
+    width: auto;
     height: auto;
-    padding: 10px;           /* Un poco de área para hacer clic fácil */
+    padding: 10px;
     
     cursor: pointer;
-    font-size: 1.8rem;       /* Flecha un poco más grande */
+    font-size: 1.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease; /* Transición suave solo para el color */
+    transition: color 0.2s ease;
 }
 
 .nav-arrow-btn:hover {
@@ -1867,8 +1735,8 @@ font-size: 2rem;
     margin: 0;
     font-size: 1.8rem;
     color: white;
-    text-transform: capitalize; /* Primera letra mayúscula */
-    min-width: 200px; /* Para que no bailen las flechas si el nombre del mes es corto */
+    text-transform: capitalize;
+    min-width: 200px;
     text-align: center;
-    font-family: 'PokemonFireRed', monospace; /* Tu fuente */
+    font-family: 'PokemonFireRed', monospace;
 }
