@@ -115,7 +115,6 @@ function renderShowcase(jugadores) {
 
         const card = document.createElement('div');
         card.className = 'staff-card'; 
-        card.style.cursor = 'pointer'; 
 
         const avatarUrl = fixPath(jugador.avatar);
 

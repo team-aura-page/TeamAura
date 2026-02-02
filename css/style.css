@@ -2,6 +2,7 @@
    1. VARIABLES Y CONFIGURACIÓN GENERAL
    ========================================= */
 :root {
+    --cursor-random: auto;
     --gold: #ffcc00;
     --bg-dark: #121212;
     --bg-panel: #2a2a2a;
@@ -10,6 +11,18 @@
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+}
+
+a, 
+button, 
+.nav-arrow-btn, 
+.tracker-poke-card, 
+.video-wrapper,
+select,
+input[type="checkbox"],
+.admin-btn,
+.leaderboard-item {
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
 }
 
 * {
@@ -26,6 +39,7 @@ html {
 }
 
 body {
+    cursor: var(--cursor-random) 0 0, auto;
     background-color: var(--bg-dark);
     color: var(--text-white);
     font-family: 'PokemonFireRed', 'Courier New', monospace; 
@@ -98,7 +112,6 @@ h1, h2, h3, h4 {
 
 .nav-item.active {
     pointer-events: none;
-    cursor: default;
 }
 
 .nav-item.active span {
@@ -208,6 +221,7 @@ h1, h2, h3, h4 {
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
+
 /* Efecto al hacer foco */
 .filters-container input:focus,
 .filters-container select:focus {
@@ -221,7 +235,7 @@ h1, h2, h3, h4 {
 }
 
 .filters-container select {
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
 }
 
 @media (max-width: 600px) {
@@ -277,7 +291,7 @@ h1, h2, h3, h4 {
     align-items: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
 }
 
 .staff-card:hover {
@@ -410,6 +424,7 @@ h1, h2, h3, h4 {
     visibility: visible;
 }
 
+
 .modal-content {
     background-color: var(--bg-panel); 
     padding: 30px;
@@ -438,7 +453,7 @@ h1, h2, h3, h4 {
     top: 20px; right: 25px;
     font-size: 2.5rem;
     color: var(--gold);
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
     line-height: 1;
     z-index: 10;
     transition: color 0.2s;
@@ -818,7 +833,7 @@ h1, h2, h3, h4 {
     transform: scale(1.1) translateY(-5px);
     z-index: 10;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
 }
 
 .shiny-card.captured:hover .trainer-tooltip {
@@ -870,7 +885,7 @@ h1, h2, h3, h4 {
     background: #ffcc00;
     color: #000;
     box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
 }
 
 .shinydex-index a.active {
@@ -1153,7 +1168,7 @@ h1, h2, h3, h4 {
     display: flex;
     align-items: center;
     gap: 15px;
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
     
     border-left: 6px solid #555;
     transition: transform 0.2s, background 0.2s;
@@ -1276,7 +1291,7 @@ h1, h2, h3, h4 {
     border: none;
     color: #fff;
     font-size: 2rem;
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
     z-index: 10;
 }
 
@@ -1517,7 +1532,7 @@ font-size: 2rem;
     border: none;
     padding: 12px 25px;
     font-size: 1rem;
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
     margin: 15px auto;
     border-radius: 8px;
     font-weight: bold;
@@ -1595,6 +1610,23 @@ font-size: 2rem;
 .tracker-poke-card.is-rare:hover {
     box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
     transform: translateY(-5px) scale(1.03);
+}
+/* Icono flotante para Secret/Alpha/Etc en el Tracker */
+.tracker-special-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    z-index: 10;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));
+    
+    transition: transform 0.3s ease;
+}
+
+.tracker-poke-card:hover .tracker-special-icon {
+    transform: scale(1.2) rotate(10deg);
 }
 
 #normalTitle {
@@ -1700,7 +1732,7 @@ font-size: 2rem;
     height: auto;
     padding: 10px;
     
-    cursor: pointer;
+    cursor: url('../icons/cursorDef.png') 0 0, pointer;
     font-size: 1.8rem;
     display: flex;
     align-items: center;

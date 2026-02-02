@@ -262,7 +262,6 @@ function renderMonth(selectedMonth) {
             card.style.border = "1px solid #333";
         }
         if (isAdmin) {
-            card.style.cursor = "pointer";
             card.title = "ADMIN: Clic para cambiar rareza";
             card.onclick = () => toggleRarity(capture, selectedMonth); 
         }
@@ -290,6 +289,28 @@ function createCard(capture) {
     const pokeName = (capture.pokemon || 'unown').toLowerCase();
     const spriteUrl = `https://play.pokemonshowdown.com/sprites/gen5ani-shiny/${pokeName}.gif`;
     
+    // --- 1. LÓGICA DE ICONOS ESPECIALES ---
+    // Mapeamos el nombre que guardas en la BD (ej: 'secret') con la ruta de la imagen
+    const SPECIAL_ICONS = {
+        'secret': '../icons/secretshiny.png',
+        'alpha': '../icons/alfa.png',      // Opcional: si quieres que salgan también
+        'fossil': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/helix-fossil.png',
+        'safari': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/safari-ball.png',
+        'egg': '../icons/eggshiny.png'
+    };
+
+    let specialIconHTML = '';
+
+    // Si el pokemon tiene propiedad 'icono' y existe en nuestra lista...
+    if (capture.icono && SPECIAL_ICONS[capture.icono]) {
+        const iconUrl = SPECIAL_ICONS[capture.icono];
+        // Creamos la imagen flotante
+        specialIconHTML = `
+            <img src="${iconUrl}" class="tracker-special-icon" alt="${capture.icono}" title="Shiny Especial: ${capture.icono}">
+        `;
+    }
+    // -------------------------------------
+
     let fechaBonita = "??/??";
     if (capture.date && capture.date.includes('-')) {
         const parts = capture.date.split('-'); 
@@ -297,7 +318,7 @@ function createCard(capture) {
     }
 
     card.innerHTML = `
-        <img src="${spriteUrl}" alt="${pokeName}" class="tracker-poke-sprite" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+        ${specialIconHTML} <img src="${spriteUrl}" alt="${pokeName}" class="tracker-poke-sprite" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
         <h3 style="text-transform: capitalize; margin: 0; color: white; font-size: 1.2rem;">${pokeName}</h3>
         <div class="tracker-trainer-text">${capture.trainer}</div>
         <div class="tracker-date-badge">📅 ${fechaBonita}</div>
