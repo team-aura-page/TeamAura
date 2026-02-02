@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyBmRZZTNFgDaDkHCuF-DMtogH9RNSf_QTU",
     authDomain: "page-aura.firebaseapp.com",
@@ -54,21 +55,31 @@ function initWar(mainData, warsData) {
     const processTeam = (teamList, teamLetter) => {
         let teamTotalScore = 0;
         
-        const roster = teamList.map(trainerName => {
+        const roster = teamList.map(memberEntry => {
             
-            const profile = mainData.find(p => p.nombre.toLowerCase() === trainerName.toLowerCase());
-            let avatar = '../icons/unown.png'; 
+            let trainerName = '';
+            
+            if (typeof memberEntry === 'object' && memberEntry !== null) {
+                trainerName = memberEntry.nombre || 'Desconocido';
+            } else {
+                trainerName = String(memberEntry);
+            }
+            const profile = mainData.find(p => 
+                p && p.nombre && p.nombre.toLowerCase() === trainerName.toLowerCase()
+            );
 
+            let avatar = '../icons/unown.png';
             if (profile) {
                 avatar = profile.avatar;
             } else {
+                // Miramos si está en la lista de invitados para ponerle foto especial
                 const guests = activeWar.guests || {};
                 const guestKey = Object.keys(guests).find(k => k.toLowerCase() === trainerName.toLowerCase());
+                
                 if (guestKey) {
                     avatar = guests[guestKey];
                 }
             }
-
             let allCaptures = [];
             if (activeWar.captures) {
                 allCaptures = Array.isArray(activeWar.captures) 
@@ -91,7 +102,7 @@ function initWar(mainData, warsData) {
             teamTotalScore += score;
 
             return { 
-                nombre: trainerName, 
+                nombre: trainerName,
                 avatar, 
                 score, 
                 captures: validCaptures,
