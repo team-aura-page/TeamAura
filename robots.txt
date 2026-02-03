@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /.git/
+Disallow: /font/
+Disallow: /cursor/
+
+Sitemap: https://team-aura-page.github.io/TeamAura/sitemap.xml
