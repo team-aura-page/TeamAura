@@ -28,7 +28,7 @@ const statsContainer = document.getElementById('statsContainer');
 const totalCount = document.getElementById('totalCount');
 const adminBtn = document.getElementById('adminSaveBtn');
 
-let globalUsersData = {}; 
+let globalUsersData = {};
 let displayedCaptures = [];
 let isAdmin = false;
 
@@ -44,12 +44,12 @@ onAuthStateChanged(auth, (user) => {
 if (urlParams.get('admin') === 'true') {
     setTimeout(() => {
         if (!auth.currentUser) {
-            
+
             const email = prompt("📧 ZONA ADMIN\nIntroduce tu CORREO de administrador:");
-            
+
             if (email) {
                 const password = prompt("🔒 ZONA ADMIN\nIntroduce tu CONTRASEÑA:");
-                
+
                 if (password) {
                     signInWithEmailAndPassword(auth, email, password)
                         .then(() => {
@@ -70,8 +70,8 @@ function enableAdminMode() {
     isAdmin = true;
     if (adminBtn) adminBtn.style.display = 'block';
     console.log("🔓 MODO ADMIN ACTIVADO (Usuario Autenticado)");
-    
-    updateMonthUI(); 
+
+    updateMonthUI();
 }
 
 function updateMonthUI() {
@@ -95,8 +95,8 @@ function updateMonthUI() {
     }
 
     const realDate = new Date();
-        const isFutureLimit = (
-        year === realDate.getFullYear() && 
+    const isFutureLimit = (
+        year === realDate.getFullYear() &&
         currentTrackerDate.getMonth() === realDate.getMonth()
     );
 
@@ -114,9 +114,9 @@ function updateMonthUI() {
 
     if (displayedCaptures.length > 0 || Object.keys(globalUsersData).length > 0) {
         if (displayedCaptures.length === 0 && Object.keys(globalUsersData).length === 0) {
-           // Esperamos
+            // Esperamos
         } else {
-           renderMonth(formattedDateKey);
+            renderMonth(formattedDateKey);
         }
     }
 }
@@ -153,9 +153,9 @@ async function loadData() {
                             trainer: user.nombre || 'Anónimo',
                             refPath: `users/${userKey}/equipo/${pokeKey}`
                         };
-                        
+
                         if (!captureData.date) {
-                            captureData.date = "2024-01-01"; 
+                            captureData.date = "2024-01-01";
                             captureData.isLegacy = true;
                         }
 
@@ -182,19 +182,19 @@ function renderMonth(selectedMonth) {
     if (normalGrid) normalGrid.innerHTML = '';
     if (rareGrid) rareGrid.innerHTML = '';
     const leaderboardDiv = document.getElementById('leaderboard');
-    if (leaderboardDiv) leaderboardDiv.innerHTML = ''; 
+    if (leaderboardDiv) leaderboardDiv.innerHTML = '';
 
     if (filtered.length === 0) {
         if (rareZone) rareZone.style.display = 'none';
         if (normalTitle) normalTitle.style.display = 'none';
-        
+
         if (normalGrid) normalGrid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 60px; opacity: 0.6; color: #ccc;">
                 <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/201-question.png" style="width:100px; margin-bottom: 20px;">
                 <p style="font-size: 1.2rem;">Ningún shiny registrado en este mes... </p>
             </div>
         `;
-        return; 
+        return;
     }
 
     if (leaderboardDiv) {
@@ -213,24 +213,24 @@ function renderMonth(selectedMonth) {
         const sortedRanking = Object.entries(counts)
             .map(([name, count]) => ({ name, count }))
             .sort((a, b) => b.count - a.count)
-            .slice(0, 3); 
+            .slice(0, 3);
 
         let rankHTML = '';
-        
+
         sortedRanking.forEach((item, index) => {
             let medalContent = '';
             let rankClass = '';
 
-            if (index === 0) { 
-                rankClass = 'rank-1'; 
+            if (index === 0) {
+                rankClass = 'rank-1';
                 medalContent = `<img src="${MEDAL_IMAGES[0]}" class="custom-medal" alt="1º">`;
-            } 
-            else if (index === 1) { 
-                rankClass = 'rank-2'; 
+            }
+            else if (index === 1) {
+                rankClass = 'rank-2';
                 medalContent = `<img src="${MEDAL_IMAGES[1]}" class="custom-medal" alt="2º">`;
-            } 
-            else if (index === 2) { 
-                rankClass = 'rank-3'; 
+            }
+            else if (index === 2) {
+                rankClass = 'rank-3';
                 medalContent = `<img src="${MEDAL_IMAGES[2]}" class="custom-medal" alt="3º">`;
             }
 
@@ -262,8 +262,12 @@ function renderMonth(selectedMonth) {
             card.style.border = "1px solid #333";
         }
         if (isAdmin) {
-            card.title = "ADMIN: Clic para cambiar rareza";
-            card.onclick = () => toggleRarity(capture, selectedMonth); 
+            card.title = "ADMIN: Clic Izd = Rareza | Clic Der = Shinydex Nuevo";
+            card.onclick = () => toggleRarity(capture, selectedMonth);
+            card.oncontextmenu = (e) => {
+                e.preventDefault();
+                toggleNuevoShinydex(capture, selectedMonth);
+            };
         }
 
         if (isRare) {
@@ -284,11 +288,11 @@ function renderMonth(selectedMonth) {
 
 function createCard(capture) {
     const card = document.createElement('div');
-    card.className = 'tracker-poke-card'; 
+    card.className = 'tracker-poke-card';
 
     const pokeName = (capture.pokemon || 'unown').toLowerCase();
     const spriteUrl = `https://play.pokemonshowdown.com/sprites/gen5ani-shiny/${pokeName}.gif`;
-    
+
     // --- 1. LÓGICA DE ICONOS ESPECIALES ---
     // Mapeamos el nombre que guardas en la BD (ej: 'secret') con la ruta de la imagen
     const SPECIAL_ICONS = {
@@ -305,15 +309,21 @@ function createCard(capture) {
     if (capture.icono && SPECIAL_ICONS[capture.icono]) {
         const iconUrl = SPECIAL_ICONS[capture.icono];
         // Creamos la imagen flotante
-        specialIconHTML = `
+        specialIconHTML += `
             <img src="${iconUrl}" class="tracker-special-icon" alt="${capture.icono}" title="Shiny Especial: ${capture.icono}">
+        `;
+    }
+
+    if (capture.newShinydex) {
+        specialIconHTML += `
+            <img src="../icons/new.png" class="new-shinydex-icon" alt="Nuevo Shinydex" title="¡Nuevo en la Shinydex!">
         `;
     }
     // -------------------------------------
 
     let fechaBonita = "??/??";
     if (capture.date && capture.date.includes('-')) {
-        const parts = capture.date.split('-'); 
+        const parts = capture.date.split('-');
         fechaBonita = `${parts[2]}/${parts[1]}`;
     }
 
@@ -331,7 +341,22 @@ function toggleRarity(capture, selectedMonth) {
     } else {
         capture.rarity = 'rare';
     }
-    
+
+    renderMonth(selectedMonth);
+
+    if (adminBtn) {
+        adminBtn.innerText = "💾 HAY CAMBIOS SIN GUARDAR";
+        adminBtn.style.background = "#ff9800";
+    }
+}
+
+function toggleNuevoShinydex(capture, selectedMonth) {
+    if (capture.newShinydex) {
+        delete capture.newShinydex;
+    } else {
+        capture.newShinydex = true;
+    }
+
     renderMonth(selectedMonth);
 
     if (adminBtn) {
@@ -345,19 +370,21 @@ if (adminBtn) {
         try {
             adminBtn.innerText = "⏳ Guardando...";
             adminBtn.style.background = "#9e9e9e";
-            
+
             const updates = {};
-            
+
             displayedCaptures.forEach(cap => {
                 const rarityValue = cap.rarity === 'rare' ? 'rare' : null;
                 updates[`${cap.refPath}/rarity`] = rarityValue;
+                const newShinydexValue = cap.newShinydex ? true : null;
+                updates[`${cap.refPath}/newShinydex`] = newShinydexValue;
             });
 
             await update(ref(db), updates);
 
             adminBtn.innerText = "✅ CAMBIOS GUARDADOS";
             adminBtn.style.background = "#4caf50";
-            
+
             setTimeout(() => {
                 adminBtn.innerText = "💾 GUARDAR CAMBIOS";
                 adminBtn.style.background = "#e91e63";
