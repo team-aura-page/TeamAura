@@ -49,6 +49,7 @@ body {
     text-align: center;
     -webkit-font-smoothing: none;
     -moz-osx-font-smoothing: grayscale;
+    padding-top: 20px;
 }
 
 a {
@@ -78,91 +79,84 @@ h4 {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
 }
 
+/* --- BARRA DE NAVEGACIÓN (GLASSMORPHISM FLOATING) --- */
+
 /* --- BARRA DE NAVEGACIÓN --- */
 .main-nav {
-    /* STICKY NAV */
+    /* STICKY NAV PILL */
     position: sticky;
-    top: 0;
+    top: 20px;
     z-index: 100;
 
     display: flex;
     justify-content: center;
-    gap: 80px;
-    padding: 25px 10px;
-    flex-wrap: wrap;
-    background-color: #111;
-    border-top: 4px solid var(--gold);
-    border-bottom: 4px solid var(--gold);
-    box-shadow: 0 0 15px rgba(255, 204, 0, 0.15);
+    gap: 40px;
+    padding: 15px 30px;
+    margin: 0 auto 30px auto;
+    width: max-content;
+    max-width: 95%;
+
+    background: rgba(17, 17, 17, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 204, 0, 0.1);
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    transition: transform 0.2s, filter 0.2s;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 30px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     width: auto;
 }
 
 .nav-item img {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
+    transition: transform 0.3s ease;
 }
 
 .nav-item span {
     font-weight: bold;
-    font-size: 1.8rem;
-    color: var(--gold);
+    font-size: 1.2rem;
+    color: var(--text-white);
     white-space: nowrap;
+    transition: color 0.3s ease;
 }
-
 
 .nav-item.active {
     pointer-events: none;
+    background: rgba(255, 204, 0, 0.15);
+    border: 1px solid rgba(255, 204, 0, 0.4);
 }
 
 .nav-item.active span {
-
-    color: #c49b00;
-    border-bottom: 3px solid #c49b00;
-    ;
-
-    display: inline-block;
-    line-height: 1;
-    padding-bottom: 1px;
+    color: var(--gold);
 }
 
 .nav-start {
-    position: absolute;
-    left: 40px;
-    top: 50%;
-    transform: translateY(-50%);
+    display: flex;
 }
 
-.nav-start img {
-    width: 45px;
-    height: 45px;
+/* Hover effects */
+.nav-item:not(.active):hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
 }
 
-
-
-/* Hover para el logo */
-.nav-start:not(.active):hover {
-    transform: translateY(calc(-50% - 5px));
+.nav-item:not(.active):hover span {
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
 }
 
-.nav-start:not(.active):hover span {
-    filter: brightness(1.2);
-    text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
-}
-
-/* Hover para botones normales */
-.nav-item:not(.nav-start):not(.active):hover {
-    transform: translateY(-5px);
-}
-
-.nav-item:not(.nav-start):not(.active):hover span {
-    filter: brightness(1.2);
+.nav-item:hover img {
+    transform: scale(1.1) rotate(-5deg);
 }
 
 /* Responsive Nav */
@@ -177,6 +171,61 @@ h4 {
         gap: 20px;
     }
 }
+
+@media (max-width: 600px) {
+    .main-header {
+        padding: 0 15px;
+    }
+
+    .content-container {
+        padding: 0 15px;
+    }
+
+    .main-nav {
+        gap: 15px;
+        padding: 12px 15px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        top: 0;
+        margin-bottom: 20px;
+
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-right: none;
+        border-left: none;
+    }
+
+    .main-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-item span {
+        font-size: 1.2rem;
+    }
+
+    .nav-item img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .nav-start img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .about-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .about-section p {
+        font-size: 1.2rem;
+        max-width: 100%;
+    }
+}
+
 
 /* =========================================
    3. LAYOUT Y CONTENIDO PRINCIPAL
@@ -1150,9 +1199,7 @@ h4 {
 
 .page-shinywar {
     background-color: #121212;
-    position: relative;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
 .page-shinywar::before {
@@ -1598,16 +1645,6 @@ h4 {
     display: none;
 }
 
-.page-shinywar .main-nav {
-    background-color: transparent;
-    box-shadow: none;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
-    position: relative;
-    top: 0;
-    width: 100%;
-    z-index: 100;
-}
 
 .page-shinywar .divider {
     display: none;

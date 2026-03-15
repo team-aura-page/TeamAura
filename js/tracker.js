@@ -114,7 +114,6 @@ function updateMonthUI() {
 
     if (displayedCaptures.length > 0 || Object.keys(globalUsersData).length > 0) {
         if (displayedCaptures.length === 0 && Object.keys(globalUsersData).length === 0) {
-            // Esperamos
         } else {
             renderMonth(formattedDateKey);
         }
@@ -162,6 +161,21 @@ async function loadData() {
                         displayedCaptures.push(captureData);
                     }
                 });
+            }
+        });
+
+        window.firstCaptureDates = {};
+
+        displayedCaptures.forEach(cap => {
+            const species = (cap.pokemon || 'unown').toLowerCase().trim();
+            const capDate = new Date(cap.date);
+
+            if (!window.firstCaptureDates[species]) {
+                window.firstCaptureDates[species] = capDate;
+            } else {
+                if (capDate < window.firstCaptureDates[species]) {
+                    window.firstCaptureDates[species] = capDate;
+                }
             }
         });
 
@@ -293,11 +307,9 @@ function createCard(capture) {
     const pokeName = (capture.pokemon || 'unown').toLowerCase();
     const spriteUrl = `https://play.pokemonshowdown.com/sprites/gen5ani-shiny/${pokeName}.gif`;
 
-    // --- 1. LÓGICA DE ICONOS ESPECIALES ---
-    // Mapeamos el nombre que guardas en la BD (ej: 'secret') con la ruta de la imagen
     const SPECIAL_ICONS = {
         'secret': '../icons/secretshiny.png',
-        'alpha': '../icons/alfa.png',      // Opcional: si quieres que salgan también
+        'alpha': '../icons/alfa.png',
         'fossil': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/helix-fossil.png',
         'safari': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/safari-ball.png',
         'egg': '../icons/eggshiny.png'
@@ -305,16 +317,20 @@ function createCard(capture) {
 
     let specialIconHTML = '';
 
-    // Si el pokemon tiene propiedad 'icono' y existe en nuestra lista...
     if (capture.icono && SPECIAL_ICONS[capture.icono]) {
         const iconUrl = SPECIAL_ICONS[capture.icono];
-        // Creamos la imagen flotante
         specialIconHTML += `
             <img src="${iconUrl}" class="tracker-special-icon" alt="${capture.icono}" title="Shiny Especial: ${capture.icono}">
         `;
     }
 
-    if (capture.newShinydex) {
+    const species = (capture.pokemon || 'unown').toLowerCase().trim();
+    const isAutoNew = window.firstCaptureDates &&
+        window.firstCaptureDates[species] &&
+        capture.date &&
+        (new Date(capture.date).getTime() === window.firstCaptureDates[species].getTime());
+
+    if (capture.newShinydex === true || (isAutoNew && capture.newShinydex !== false)) {
         specialIconHTML += `
             <img src="../icons/new.png" class="new-shinydex-icon" alt="Nuevo Shinydex" title="¡Nuevo en la Shinydex!">
         `;
