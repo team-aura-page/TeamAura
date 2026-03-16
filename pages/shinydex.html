@@ -7,6 +7,7 @@
     <title>ShinyDex - Team Aura</title>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="icon" type="image/png" href="../icons/tepigfin.png" />
+    <script>if(sessionStorage.getItem('navDirection'))document.documentElement.classList.add('pt-transitioning');</script>
 </head>
 
 <body class="page-showcase">
@@ -37,7 +38,7 @@
         <div class="shinydex-header-container">
             <div class="controls-row">
                 <div class="search-wrapper">
-                    <input type="text" id="search" placeholder="Buscar Pokémon o Nº..." />
+                    <input type="text" id="search" placeholder="Buscar Pokémon, Nº o Entrenador..." />
                 </div>
                 <span id="shiny-counter">0 / 0</span>
             </div>
@@ -50,6 +51,8 @@
         </div>
     </main>
     <script src="../js/cursors.js"></script>
+    <script src="../js/stars.js"></script>
+    <script src="../js/page-transitions.js"></script>
     <script src="../js/pokemon-gen1-5.js"></script>
     <script type="module" src="../js/shinydex.js"></script>
 </body>

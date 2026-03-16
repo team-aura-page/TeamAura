@@ -9,9 +9,18 @@
     --text-white: #e0e0e0;
 }
 
+
 html {
     scroll-behavior: smooth;
     scrollbar-gutter: stable;
+    overflow-x: hidden;
+    /* Evita barra horizontal durante las transiciones */
+}
+
+/* Oculta el contenido antes de la animación de entrada */
+html.pt-transitioning main,
+html.pt-transitioning header.main-header {
+    opacity: 0;
 }
 
 a,
@@ -52,6 +61,64 @@ body {
     padding-top: 20px;
 }
 
+/* Fondo para todas las páginas excepto Shinywar (Estrellas) */
+body:not(.page-shinywar) {
+    background-color: var(--bg-dark);
+}
+
+#stars-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+}
+
+.star {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
+}
+
+.star.small {
+    width: 1px;
+    height: 1px;
+    box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.star.medium {
+    width: 2px;
+    height: 2px;
+    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.1);
+}
+
+.star.large {
+    width: 3px;
+    height: 3px;
+    box-shadow: 0px 0px 3px 1px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes twinkle {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
 a {
     text-decoration: none;
     color: inherit;
@@ -66,9 +133,6 @@ h4 {
     font-weight: normal;
 }
 
-/* =========================================
-   2. HEADER Y NAVEGACIÓN
-   ========================================= */
 .main-header {
     padding: 0 20px;
 }
@@ -79,11 +143,7 @@ h4 {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
 }
 
-/* --- BARRA DE NAVEGACIÓN (GLASSMORPHISM FLOATING) --- */
-
-/* --- BARRA DE NAVEGACIÓN --- */
 .main-nav {
-    /* STICKY NAV PILL */
     position: sticky;
     top: 20px;
     z-index: 100;
@@ -111,6 +171,7 @@ h4 {
     gap: 8px;
     padding: 8px 16px;
     border-radius: 30px;
+    border: 1px solid transparent;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     width: auto;
 }
@@ -242,7 +303,7 @@ h4 {
 }
 
 .page-index .content-container {
-    max-width: 800px;
+    max-width: 1000px;
 }
 
 .page-showcase .content-container {
@@ -368,13 +429,36 @@ h4 {
 }
 
 .page-index .staff-grid {
-    max-width: 600px;
-    grid-template-columns: repeat(2, 1fr);
+    max-width: 1000px;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.page-index .staff-grid .lider-card:nth-child(1) {
+    grid-column: span 2;
+    justify-self: end;
+}
+
+.page-index .staff-grid .lider-card:nth-child(2) {
+    grid-column: span 2;
+    justify-self: start;
 }
 
 .page-showcase .staff-grid {
     max-width: 1400px;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+@media (max-width: 1000px) {
+    .page-index .staff-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
+    }
+
+    .page-index .staff-grid .lider-card:nth-child(1),
+    .page-index .staff-grid .lider-card:nth-child(2) {
+        grid-column: span 1;
+        justify-self: center;
+    }
 }
 
 @media (max-width: 550px) {

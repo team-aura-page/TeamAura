@@ -36,21 +36,21 @@ const usersRef = ref(db, 'users');
 
 onValue(usersRef, (snapshot) => {
     const data = snapshot.val();
-    
+
     if (!data) return;
 
     const playersData = Array.isArray(data) ? data : Object.values(data);
-    
+
     const dexData = new Map();
 
     playersData.forEach(jugador => {
         const equipo = jugador.equipo || [];
-        
+
         equipo.forEach(poke => {
             if (poke.safari === 'flee') return;
 
             const name = (poke.pokemon || 'unknown').toLowerCase().trim();
-            
+
             if (!dexData.has(name)) {
                 dexData.set(name, { status: null, owners: [] });
             }
@@ -73,18 +73,18 @@ onValue(usersRef, (snapshot) => {
     initShinyDex(dexData);
 });
 function formatName(name) {
-    const fixes = { 
-        nidoranf: "Nidoran♀", nidoranm: "Nidoran♂", 
-        mrmime: "Mr. Mime", farfetchd: "Farfetch'd", 
-        hooh: "Ho-Oh", porygonz: "Porygon-Z" 
+    const fixes = {
+        nidoranf: "Nidoran♀", nidoranm: "Nidoran♂",
+        mrmime: "Mr. Mime", farfetchd: "Farfetch'd",
+        hooh: "Ho-Oh", porygonz: "Porygon-Z"
     };
     return fixes[name] || name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 function getColorByPercentage(percent) {
-    const hue = (percent * 1.2); 
+    const hue = (percent * 1.2);
     const saturation = percent;
-    const lightness = 60 - (percent * 0.1); 
+    const lightness = 60 - (percent * 0.1);
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
@@ -95,7 +95,7 @@ function animateValue(element, start, end, duration, isGlobal = false, currentOb
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const currentPercent = Math.floor(progress * (end - start) + start);
         const currentColor = getColorByPercentage(currentPercent);
-        
+
         if (isGlobal) {
             element.style.color = currentColor;
             element.innerHTML = `${currentObtained} / ${total} <span class="percentage-text" style="color: ${currentColor}">${currentPercent}%</span>`;
@@ -105,7 +105,7 @@ function animateValue(element, start, end, duration, isGlobal = false, currentOb
             if (wrapper) wrapper.style.color = currentColor;
             if (percSpan) percSpan.textContent = `${currentPercent}%`;
         }
-        
+
         if (progress < 1) window.requestAnimationFrame(step);
     };
     window.requestAnimationFrame(step);
@@ -139,16 +139,16 @@ function showTooltip(e) {
 
     if (owners.length > 3) {
         listElement.classList.add('scrolling');
-        const duration = 2 + (owners.length * 0.8);       
+        const duration = 2 + (owners.length * 0.8);
         listElement.style.animationDuration = `${duration}s`;
-        
+
     } else {
         listElement.classList.remove('scrolling');
         listElement.style.animationDuration = '0s';
     }
 
     tooltipElement.classList.add('visible');
-    moveTooltip(e); 
+    moveTooltip(e);
 }
 
 function moveTooltip(e) {
@@ -165,7 +165,7 @@ function hideTooltip() {
 function initShinyDex(dexData) {
     globalCaptured = 0;
     generationBlocks = [];
-    main.innerHTML = ""; 
+    main.innerHTML = "";
     index.innerHTML = "";
 
     GENERATIONS.forEach((gen, gIndex) => {
@@ -192,7 +192,8 @@ function initShinyDex(dexData) {
 
             const card = document.createElement("div");
             card.className = `shiny-card ${statusClass}`;
-            
+            card.dataset.searchKey = `${formatName(pokeObj.name).toLowerCase()} #${String(pokeObj.id).padStart(3, "0")}`;
+
             card.innerHTML = `
                 <span class="poke-number">#${String(pokeObj.id).padStart(3, "0")}</span>
                 <div class="sprite-wrapper">
@@ -217,7 +218,7 @@ function initShinyDex(dexData) {
         title.innerHTML = `${gen.label} <span class="count-wrapper">
             <span class="gen-count-badge">(${genCaptured} / ${genPokemonList.length})</span>
             <span class="percentage-text">0%</span></span>`;
-        
+
         block.appendChild(title);
         block.appendChild(grid);
         main.appendChild(block);
@@ -231,10 +232,10 @@ function initShinyDex(dexData) {
 
     setTimeout(() => {
         const totalPokes = GEN1_5_POKEMON.length;
-        animateValue(counterGlobal, 0, Math.round((globalCaptured/totalPokes)*100), 1500, true, globalCaptured, totalPokes);
+        animateValue(counterGlobal, 0, Math.round((globalCaptured / totalPokes) * 100), 1500, true, globalCaptured, totalPokes);
         generationBlocks.forEach(g => animateValue(g.title, 0, g.percentGen, 1500));
         index.querySelectorAll('a').forEach((l, idx) => setTimeout(() => l.classList.add('reveal'), idx * 100));
-        
+
         initCardsReveal();
     }, 300);
 
@@ -254,17 +255,34 @@ function initCardsReveal() {
 }
 
 if (searchInput) {
+    let searchDebounce = null;
     searchInput.addEventListener("input", () => {
-        const value = searchInput.value.toLowerCase();
-        generationBlocks.forEach(g => {
-            let visible = 0;
-            g.block.querySelectorAll(".shiny-card").forEach(card => {
-                const match = card.innerText.toLowerCase().includes(value);
-                card.style.display = match ? "flex" : "none";
-                if (match) visible++;
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => {
+            const searchValue = searchInput.value.toLowerCase().trim();
+
+            generationBlocks.forEach(g => {
+                let visible = 0;
+                g.block.querySelectorAll(".shiny-card").forEach(card => {
+                    const matchPoke = card.dataset.searchKey ? card.dataset.searchKey.includes(searchValue) : card.textContent.toLowerCase().includes(searchValue);
+
+                    let matchTrainer = false;
+                    if (card.dataset.owners) {
+                        try {
+                            const owners = JSON.parse(card.dataset.owners);
+                            matchTrainer = owners.some(o => o.toLowerCase().includes(searchValue));
+                        } catch (e) {
+                            matchTrainer = false;
+                        }
+                    }
+
+                    const match = matchPoke || matchTrainer;
+                    card.style.display = match ? "flex" : "none";
+                    if (match) visible++;
+                });
+                g.block.style.display = visible > 0 ? "block" : "none";
             });
-            g.block.style.display = visible > 0 ? "block" : "none";
-        });
+        }, 100);
     });
 }
 
