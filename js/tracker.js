@@ -335,6 +335,12 @@ function createCard(capture) {
             <img src="../icons/new.png" class="new-shinydex-icon" alt="Nuevo Shinydex" title="¡Nuevo en la Shinydex!">
         `;
     }
+
+    if (capture.safari === 'flee') {
+        specialIconHTML += `
+            <img src="../icons/dead.png" class="tracker-special-icon" alt="Flee" title="¡Huyó en el Safari!">
+        `;
+    }
     // -------------------------------------
 
     let fechaBonita = "??/??";
@@ -343,8 +349,13 @@ function createCard(capture) {
         fechaBonita = `${parts[2]}/${parts[1]}`;
     }
 
+    let spriteStyle = "";
+    if (capture.safari === "flee") {
+        spriteStyle = "filter: grayscale(100%); opacity: 0.7;";
+    }
+
     card.innerHTML = `
-        ${specialIconHTML} <img src="${spriteUrl}" alt="${pokeName}" class="tracker-poke-sprite" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+        ${specialIconHTML} <img src="${spriteUrl}" alt="${pokeName}" class="tracker-poke-sprite" style="${spriteStyle}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
         <h3 style="text-transform: capitalize; margin: 0; color: white; font-size: 1.2rem;">${pokeName}</h3>
         <div class="tracker-trainer-text">${capture.trainer}</div>
         <div class="tracker-date-badge">📅 ${fechaBonita}</div>
